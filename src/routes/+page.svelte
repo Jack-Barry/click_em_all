@@ -1,2 +1,6 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>Click 'em All</h1>
+<button
+	on:click={async () => {
+		await browser.runtime.openOptionsPage();
+	}}>Options</button
+>

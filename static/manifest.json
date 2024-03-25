@@ -1,0 +1,14 @@
+{
+	"manifest_version": 3,
+	"name": "click-em-all",
+	"description": "Clicks all buttons on a page based on provided selectors",
+	"version": "0.0.1",
+	"host_permissions": [],
+	"permissions": ["activeTab", "scripting"],
+	"action": {
+		"default_popup": "index.html"
+	},
+	"options_ui": {
+		"page": "options.html"
+	}
+}
