@@ -1,5 +1,6 @@
 <script lang="ts">
   import browser, { type Tabs } from "webextension-polyfill";
+  import { sendMessage } from "webext-bridge/popup";
   import { openOptionsPage } from "../lib/utils";
 
   let activeTab: Tabs.Tab | undefined;
@@ -7,23 +8,17 @@
     activeTab = tab[0];
   });
 
-  function doStuffInTab() {
-    console.log("hello from tab");
-  }
-
   let clickError: string | undefined;
-  async function clickEmAll() {
-    clickError = undefined;
-
-    if (!activeTab?.id || !activeTab.url?.startsWith("https:")) {
-      clickError = "must have a webpage open to click things";
+  function clickEmAll() {
+    if (!activeTab?.id) {
       return;
     }
 
-    await browser.scripting.executeScript({
-      target: { tabId: activeTab.id },
-      func: doStuffInTab,
-    });
+    sendMessage(
+      "clickEmAll",
+      { hello: "from popup" },
+      `content-script@${activeTab.id}`
+    );
   }
 </script>
 

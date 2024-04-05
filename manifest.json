@@ -10,6 +10,15 @@
     "128": "icon128.png"
   },
   "permissions": ["activeTab", "scripting"],
+  "background": {
+    "scripts": ["src/scripts/background/index.ts"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["src/scripts/content/index.ts"]
+    }
+  ],
   "action": {
     "default_popup": "pages/popup.html"
   },
