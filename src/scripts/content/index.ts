@@ -1,8 +1,13 @@
 import { onMessage, sendMessage } from "webext-bridge/content-script";
-import { Clicker } from "../../lib/Clicker/Clicker";
+import {
+  Clicker,
+  ClickerTargetStrategyType,
+  type ClickerTarget,
+} from "../../lib/Clicker/Clicker";
 import { ClickerEvent, ClickerEventType } from "../../lib/Clicker/ClickerEvent";
 
-console.log("Initializing Click 'em All...");
+console.log("🏁 Initializing Click 'em All...");
+
 const clicker = new Clicker();
 clicker.addEventListener(ClickerEventType.beginClicking, (e) => {
   sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.beginClicking>);
@@ -12,10 +17,27 @@ clicker.addEventListener(ClickerEventType.endClicking, (e) => {
   sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.endClicking>);
 });
 
-onMessage("clickEmAll", async (message) => {
-  console.log("Messaged received", message);
-  console.log("🔨 Proceeding to click 'em all");
-  await clicker.clickEmAll();
+clicker.addEventListener(ClickerEventType.foundElements, (e) => {
+  sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.foundElements>);
+});
+
+clicker.addEventListener(ClickerEventType.maxClicksReached, (e) => {
+  sendClickEmAllEventToPopup(
+    e as ClickerEvent<ClickerEventType.maxClicksReached>
+  );
+});
+
+clicker.addEventListener(ClickerEventType.clickedElements, (e) => {
+  sendClickEmAllEventToPopup(
+    e as ClickerEvent<ClickerEventType.clickedElements>
+  );
+});
+
+onMessage("clickEmAll", async (msg) => {
+  console.log("🔨 Clickin' 'em all");
+
+  console.log({ msg });
+  await clicker.clickEmAll(msg.data as ClickerTarget[]);
 });
 
 console.log("Click 'em All Initialized 🤘");

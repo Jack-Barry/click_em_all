@@ -1,13 +1,30 @@
+import type { ClickerTargetWithId } from "./Clicker";
+
 /** Event emitted by a `Clicker` instance */
 export class ClickerEvent<
   Type extends ClickerEventType = ClickerEventType
-> extends CustomEvent<any> {
-  constructor(type: Type, data: any) {
-    super(type, data);
+> extends CustomEvent<ClickerEventDetail<Type>> {
+  constructor(type: Type, data?: ClickerEventDetail<Type>) {
+    super(type, { detail: data });
   }
 }
 
 export enum ClickerEventType {
   beginClicking = "beginClicking",
+  foundElements = "foundElements",
+  maxClicksReached = "maxClicksReached",
+  clickedElements = "clickedElements",
   endClicking = "endClicking",
 }
+
+type ClickerEventDetail<Type extends ClickerEventType> = Type extends
+  | ClickerEventType.beginClicking
+  | ClickerEventType.endClicking
+  ? undefined
+  : Type extends ClickerEventType.maxClicksReached
+  ? { target: ClickerTargetWithId }
+  : Type extends
+      | ClickerEventType.foundElements
+      | ClickerEventType.clickedElements
+  ? { target: ClickerTargetWithId; count: number }
+  : any;
