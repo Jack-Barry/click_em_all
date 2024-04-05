@@ -9,12 +9,12 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "host_permissions": [],
-  "permissions": ["scripting", "tabs"],
+  "permissions": ["activeTab", "scripting"],
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "pages/popup.html"
   },
   "options_ui": {
-    "page": "options.html"
+    "page": "pages/options.html",
+    "open_in_tab": true
   }
 }
