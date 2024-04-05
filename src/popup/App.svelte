@@ -1,11 +1,18 @@
 <script lang="ts">
   import browser, { type Tabs } from "webextension-polyfill";
-  import { sendMessage } from "webext-bridge/popup";
+  import { onMessage, sendMessage } from "webext-bridge/popup";
   import { openOptionsPage } from "../lib/utils";
+  import type { ClickerEvent } from "../lib/Clicker/ClickerEvent";
 
   let activeTab: Tabs.Tab | undefined;
   browser.tabs.query({ active: true }).then((tab) => {
     activeTab = tab[0];
+  });
+
+  let status = "";
+  onMessage("clickEmAllEvent", (msg) => {
+    console.log("clickEmAll event", msg);
+    status = (msg.data as unknown as ClickerEvent).type;
   });
 
   let clickError: string | undefined;
@@ -23,6 +30,9 @@
 </script>
 
 <main>
+  {#if status}
+    <div>{status}</div>
+  {/if}
   <button
     on:click={() => {
       clickEmAll();
