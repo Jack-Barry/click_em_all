@@ -1,12 +1,12 @@
 <script lang="ts">
   import browser, { type Tabs } from "webextension-polyfill";
   import { onMessage, sendMessage } from "webext-bridge/popup";
-  import { openOptionsPage } from "../lib/utils";
+  import { openOptionsPage } from "../../lib/utils";
   import {
     ClickerEventType,
     type ClickerEvent,
-  } from "../lib/Clicker/ClickerEvent";
-  import { type ClickerTarget } from "../lib/Clicker/Clicker";
+  } from "../../lib/Clicker/ClickerEvent";
+  import { type ClickerTarget } from "../../lib/Clicker/Clicker";
 
   let activeTab: Tabs.Tab | undefined;
   browser.tabs.query({ active: true }).then((tab) => {

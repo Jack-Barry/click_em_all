@@ -20,10 +20,10 @@
     }
   ],
   "action": {
-    "default_popup": "pages/popup.html"
+    "default_popup": "src/pages/popup/index.html"
   },
   "options_ui": {
-    "page": "pages/options.html",
+    "page": "src/pages/options/index.html",
     "open_in_tab": true
   }
 }
