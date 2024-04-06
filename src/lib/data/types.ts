@@ -14,6 +14,18 @@ export interface AppData {
       url: string,
       group: Omit<ClickerTargetsConfigTargetGroup, "id">
     ) => Promise<{ id: string }>;
+    /**
+     * Fetches groups for a given URL
+     */
+    getGroups: (url: string) => Promise<ClickerTargetsConfigTargetGroup[]>;
+    /** Edits target group data */
+    editGroup: (
+      url: string,
+      groupId: string,
+      data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
+    ) => Promise<void>;
+    /** Removes target group data */
+    removeGroup: (url: string, groupId: string) => Promise<void>;
   };
 }
 

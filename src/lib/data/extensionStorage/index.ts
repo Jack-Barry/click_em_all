@@ -31,6 +31,50 @@ class ExtensionStorage implements AppData {
       });
       return { id };
     },
+
+    getGroups: async (url: string) => {
+      const data = await this.targets.get();
+      return data[url];
+    },
+
+    editGroup: async (
+      url: string,
+      groupId: string,
+      data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
+    ) => {
+      const existingTargets = await this.targets.get();
+      const groupIndex = existingTargets[url].findIndex(
+        (v) => v.id === groupId
+      );
+      const newTargets: ClickerTargetsConfig = {
+        ...existingTargets,
+        [url]: [
+          ...existingTargets[url].slice(0, groupIndex),
+          { ...existingTargets[url][groupIndex], ...data },
+          ...existingTargets[url].slice(groupIndex + 1),
+        ],
+      };
+      await Browser.storage.local.set({
+        [StoredOptionsKeys.targets]: newTargets,
+      });
+    },
+
+    removeGroup: async (url: string, groupId: string) => {
+      const existingTargets = await this.targets.get();
+      const groupIndex = existingTargets[url].findIndex(
+        (v) => v.id === groupId
+      );
+      const newTargets: ClickerTargetsConfig = {
+        ...existingTargets,
+        [url]: [
+          ...existingTargets[url].slice(0, groupIndex),
+          ...existingTargets[url].slice(groupIndex + 1),
+        ],
+      };
+      await Browser.storage.local.set({
+        [StoredOptionsKeys.targets]: newTargets,
+      });
+    },
   };
 }
 
