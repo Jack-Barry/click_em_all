@@ -19,6 +19,7 @@ vi.mock("webextension-polyfill", async () => {
       storage: {
         local: {
           get: vi.fn().mockResolvedValue({}),
+          set: vi.fn(),
         },
       },
     },

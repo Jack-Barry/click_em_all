@@ -3,7 +3,17 @@ import type { ClickerTargetStrategyType } from "../Clicker/Clicker";
 /** Interface to interact with app's data */
 export interface AppData {
   targets: {
+    /** Retrieves all stored targets data */
     get: () => Promise<ClickerTargetsConfig>;
+    /**
+     * Adds a new targets group for the specified URL
+     *
+     * @returns Unique ID assigned to the new group
+     */
+    addGroup: (
+      url: string,
+      group: Omit<ClickerTargetsConfigTargetGroup, "id">
+    ) => Promise<{ id: string }>;
   };
 }
 
@@ -19,6 +29,8 @@ export type ClickerTargetsConfig = Record<
 
 /** Group of targets for a given URL in `ClickerTargetsConfig` */
 export interface ClickerTargetsConfigTargetGroup {
+  /** Unique ID assigned to the target group */
+  id: string;
   /** Name for the targets group, e.g. "Clip Coupons" */
   name: string;
   /** An array of targets that will be sequentially clicked */
