@@ -6,14 +6,27 @@
     ClickerEventType,
     type ClickerEvent,
   } from "../lib/Clicker/ClickerEvent";
-  import {
-    ClickerTargetStrategyType,
-    type ClickerTarget,
-  } from "../lib/Clicker/Clicker";
+  import { type ClickerTarget } from "../lib/Clicker/Clicker";
 
   let activeTab: Tabs.Tab | undefined;
   browser.tabs.query({ active: true }).then((tab) => {
     activeTab = tab[0];
+  });
+
+  let tabConfigs: { name: string; targets: ClickerTarget[] }[] = [];
+  browser.storage.local.get("options").then((options) => {
+    if (!options) {
+      return;
+    }
+
+    Object.entries(options.options).forEach(([key, value]) => {
+      if ((activeTab?.url || "").startsWith(key)) {
+        tabConfigs = [
+          ...tabConfigs,
+          ...(value as { name: string; targets: ClickerTarget[] }[]),
+        ];
+      }
+    });
   });
 
   let status: Record<string, ClickerEvent<ClickerEventType>[]> = {};
@@ -25,38 +38,31 @@
     }
   });
 
-  function clickEmAll() {
+  function clickEmAll(targets: ClickerTarget[]) {
+    status = {};
     if (!activeTab?.id) {
       return;
     }
 
-    status = {};
-    const targets: ClickerTarget[] = [
-      {
-        name: "Load More Button",
-        selector: ".btn.load-more",
-        strategy: { type: ClickerTargetStrategyType.whilePresent },
-      },
-      {
-        name: "Clip Coupon Button",
-        selector: "[id^=couponAddBtn]",
-        strategy: { type: ClickerTargetStrategyType.allFound },
-      },
-    ];
     sendMessage("clickEmAll", targets as any, `content-script@${activeTab.id}`);
   }
 </script>
 
 <main>
-  <button
-    on:click={() => {
-      clickEmAll();
-    }}>Click 'em All</button
-  >
+  {#if tabConfigs.length}
+    {#each tabConfigs as tabConfig}
+      <button
+        on:click={() => {
+          clickEmAll(tabConfig.targets);
+        }}>{tabConfig.name}</button
+      >
+    {/each}
+  {:else}
+    <div>No click targets configured for current tab</div>
+  {/if}
   <div>
     {#each Object.entries(status) as [_, data]}
       <div>
-        <!-- <div>{data[0].detail?.target.name}</div> -->
         {#if data[data.length - 1].type === ClickerEventType.foundElements}
           <div>
             Found {data[data.length - 1].detail?.count} instances of {data[

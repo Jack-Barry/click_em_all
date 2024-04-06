@@ -1,9 +1,13 @@
 body {
   background-color: #000000;
   color: #f01f28;
+  font-family: "ITC Serif Gothic";
 }
 
 h1 {
-  font-family: "ITC Serif Gothic";
   font-weight: 900;
+}
+
+button {
+  font-family: "ITC Serif Gothic";
 }
