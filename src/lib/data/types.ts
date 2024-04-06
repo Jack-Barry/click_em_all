@@ -14,6 +14,8 @@ export interface AppData {
       url: string,
       group: Omit<ClickerTargetsConfigTargetGroup, "id">
     ) => Promise<{ id: string }>;
+    /** Removes all stored targets data for a given URL */
+    removeUrl: (url: string) => Promise<void>;
     /**
      * Fetches groups for a given URL
      */

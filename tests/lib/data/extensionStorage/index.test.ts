@@ -11,7 +11,7 @@ describe("Data: using Extension Storage: targets", () => {
     mockData = { mockurl: [] };
     vi.spyOn(browser.storage.local, "get").mockImplementation(async (key) => {
       if (key === StoredOptionsKeys.targets) {
-        return mockData;
+        return { targets: mockData };
       }
 
       return {};
@@ -57,6 +57,20 @@ describe("Data: using Extension Storage: targets", () => {
             { id: "existing", name: "Existing", targets: [] },
             { id: "a-b-c-d-e", name: "New Group", targets: [] },
           ],
+        },
+      });
+    });
+  });
+
+  describe("removeUrl", () => {
+    test("removes data for URL from storage", async () => {
+      mockData.otherUrl = [];
+      await appStorage.targets.removeUrl("mockurl");
+
+      expect(browser.storage.local.set).toHaveBeenCalledOnce();
+      expect(browser.storage.local.set).toHaveBeenCalledWith({
+        [StoredOptionsKeys.targets]: {
+          otherUrl: [],
         },
       });
     });

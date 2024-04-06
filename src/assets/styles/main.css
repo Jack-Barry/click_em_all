@@ -11,3 +11,7 @@ h1 {
 button {
   font-family: "ITC Serif Gothic";
 }
+
+.monospace {
+  font-family: monospace;
+}

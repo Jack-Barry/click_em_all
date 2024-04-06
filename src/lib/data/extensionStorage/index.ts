@@ -10,9 +10,9 @@ import { StoredOptionsKeys } from "./constants";
 class ExtensionStorage implements AppData {
   targets = {
     get: async () => {
-      return (await Browser.storage.local.get(
-        StoredOptionsKeys.targets
-      )) as ClickerTargetsConfig;
+      const allData =
+        (await Browser.storage.local.get(StoredOptionsKeys.targets)) || {};
+      return (allData[StoredOptionsKeys.targets] || {}) as ClickerTargetsConfig;
     },
 
     addGroup: async (
@@ -30,6 +30,14 @@ class ExtensionStorage implements AppData {
         [StoredOptionsKeys.targets]: newTargets,
       });
       return { id };
+    },
+
+    removeUrl: async (url: string) => {
+      const existingTargets = await this.targets.get();
+      delete existingTargets[url];
+      await Browser.storage.local.set({
+        [StoredOptionsKeys.targets]: existingTargets,
+      });
     },
 
     getGroups: async (url: string) => {
