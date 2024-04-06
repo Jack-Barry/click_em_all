@@ -2,9 +2,10 @@
   import { onMount } from "svelte";
   import type { ClickerTargetsConfig } from "../../lib/data/types";
   import { appStorage } from "../../lib/data/extensionStorage";
-  import { ClickerTargetStrategyType } from "../../lib/Clicker/Clicker";
   import Browser from "webextension-polyfill";
   import { StoredOptionsKeys } from "../../lib/data/extensionStorage/constants";
+  import TargetsConfigUrl from "../../lib/components/targetsConfig/TargetsConfigUrl.svelte";
+  import TargetsConfigUrlEdit from "../../lib/components/targetsConfig/TargetsConfigUrlEdit.svelte";
 
   let targets: ClickerTargetsConfig = {};
 
@@ -19,33 +20,33 @@
 
   $: targetsAsArray = Object.entries(targets);
 
-  async function setDummyData() {
-    await appStorage.targets.addGroup(
-      "https://www.albertsons.com/foru/coupons-deals.html",
+  // async function setDummyData() {
+  //   await appStorage.targets.addGroup(
+  //     "https://www.albertsons.com/foru/coupons-deals.html",
 
-      {
-        name: "Clip All Coupons",
-        targets: [
-          {
-            name: "Load More Button",
-            selector: ".btn.load-more",
-            strategy: ClickerTargetStrategyType.whilePresent,
-          },
-          {
-            name: "Clip Coupon Button",
-            selector: "[id^=couponAddBtn]",
-            strategy: ClickerTargetStrategyType.allFound,
-          },
-        ],
-      }
-    );
-  }
+  //     {
+  //       name: "Clip All Coupons",
+  //       targets: [
+  //         {
+  //           name: "Load More Button",
+  //           selector: ".btn.load-more",
+  //           strategy: ClickerTargetStrategyType.whilePresent,
+  //         },
+  //         {
+  //           name: "Clip Coupon Button",
+  //           selector: "[id^=couponAddBtn]",
+  //           strategy: ClickerTargetStrategyType.allFound,
+  //         },
+  //       ],
+  //     }
+  //   );
+  // }
 
-  async function clearDummyData() {
-    await appStorage.targets.removeUrl(
-      "https://www.albertsons.com/foru/coupons-deals.html"
-    );
-  }
+  // async function clearDummyData() {
+  //   await appStorage.targets.removeUrl(
+  //     "https://www.albertsons.com/foru/coupons-deals.html"
+  //   );
+  // }
   // import browser from "webextension-polyfill";
 
   // let prettyEditMode = true;
@@ -85,14 +86,31 @@
   //     }
   //   }
   // }
+  let addingNewUrl = false;
+  function toggleAddingNewUrl() {
+    addingNewUrl = !addingNewUrl;
+  }
 </script>
 
 <main>
   <h1>Options</h1>
+  {#if addingNewUrl}
+    <TargetsConfigUrlEdit
+      on:saved={async ({ detail }) => {
+        await appStorage.targets.addUrl(detail.newUrl);
+        toggleAddingNewUrl();
+      }}
+      on:cancelled={toggleAddingNewUrl}
+    />
+  {:else}
+    <button on:click={toggleAddingNewUrl}>Add URL</button>
+  {/if}
   {#each targetsAsArray as [url, targetGroups]}
     <div>
-      <div>URL: <span class="monospace">{url}</span></div>
-      {#each targetGroups as targetGroup}
+      <TargetsConfigUrl {url} />
+    </div>
+  {/each}
+  <!-- {#each targetGroups as targetGroup}
         <div style="margin-left: 1rem;">
           <div>Group Name: {targetGroup.name}</div>
           {#each targetGroup.targets as target}
@@ -112,13 +130,13 @@
             </div>
           {/each}
         </div>
-      {/each}
-      <hr />
+      {/each}-->
+  <!-- <hr />
     </div>
-  {/each}
+  {/each} -->
 
-  <button on:click={setDummyData}>Seed</button>
-  <button on:click={clearDummyData}>Clear</button>
+  <!-- <button on:click={setDummyData}>Seed</button>
+  <button on:click={clearDummyData}>Clear</button> -->
   <!-- <div>{JSON.stringify(optionsData)}</div>
   <div>
     {#if submitError}

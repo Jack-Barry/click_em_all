@@ -5,29 +5,33 @@ export interface AppData {
   targets: {
     /** Retrieves all stored targets data */
     get: () => Promise<ClickerTargetsConfig>;
-    /**
-     * Adds a new targets group for the specified URL
-     *
-     * @returns Unique ID assigned to the new group
-     */
-    addGroup: (
-      url: string,
-      group: Omit<ClickerTargetsConfigTargetGroup, "id">
-    ) => Promise<{ id: string }>;
+    /** Adds a new URL to targets data if it does not already exist */
+    addUrl: (url: string) => Promise<void>;
     /** Removes all stored targets data for a given URL */
     removeUrl: (url: string) => Promise<void>;
-    /**
-     * Fetches groups for a given URL
-     */
-    getGroups: (url: string) => Promise<ClickerTargetsConfigTargetGroup[]>;
-    /** Edits target group data */
-    editGroup: (
-      url: string,
-      groupId: string,
-      data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
-    ) => Promise<void>;
-    /** Removes target group data */
-    removeGroup: (url: string, groupId: string) => Promise<void>;
+    /** Moves data associated with a URL to a new destination */
+    moveUrl: (oldUrl: string, newUrl: string) => Promise<void>;
+    // /**
+    //  * Adds a new targets group for the specified URL
+    //  *
+    //  * @returns Unique ID assigned to the new group
+    //  */
+    // addGroup: (
+    //   url: string,
+    //   group: Omit<ClickerTargetsConfigTargetGroup, "id">
+    // ) => Promise<{ id: string }>;
+    // /**
+    //  * Fetches groups for a given URL
+    //  */
+    // getGroups: (url: string) => Promise<ClickerTargetsConfigTargetGroup[]>;
+    // /** Edits target group data */
+    // editGroup: (
+    //   url: string,
+    //   groupId: string,
+    //   data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
+    // ) => Promise<void>;
+    // /** Removes target group data */
+    // removeGroup: (url: string, groupId: string) => Promise<void>;
   };
 }
 
