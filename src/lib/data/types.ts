@@ -11,27 +11,31 @@ export interface AppData {
     removeUrl: (url: string) => Promise<void>;
     /** Moves data associated with a URL to a new destination */
     moveUrl: (oldUrl: string, newUrl: string) => Promise<void>;
-    // /**
-    //  * Adds a new targets group for the specified URL
-    //  *
-    //  * @returns Unique ID assigned to the new group
-    //  */
-    // addGroup: (
-    //   url: string,
-    //   group: Omit<ClickerTargetsConfigTargetGroup, "id">
-    // ) => Promise<{ id: string }>;
-    // /**
-    //  * Fetches groups for a given URL
-    //  */
-    // getGroups: (url: string) => Promise<ClickerTargetsConfigTargetGroup[]>;
-    // /** Edits target group data */
-    // editGroup: (
-    //   url: string,
-    //   groupId: string,
-    //   data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
-    // ) => Promise<void>;
-    // /** Removes target group data */
-    // removeGroup: (url: string, groupId: string) => Promise<void>;
+    /** Adds a new target sequence for the specified URL */
+    addSequence: (
+      url: string,
+      sequence: Omit<ClickerTargetsConfigTargetSequence, "id">
+    ) => Promise<void>;
+    /** Updates a target sequence */
+    editSequence: (
+      url: string,
+      sequenceId: string,
+      sequence: Omit<ClickerTargetsConfigTargetSequence, "id" | "targets">
+    ) => Promise<void>;
+    /** Removes a sequence from a URL */
+    removeSequence: (url: string, sequenceId: string) => Promise<void>;
+    /** Adds target to a given sequence */
+    addTargetToSequence: (
+      url: string,
+      sequenceId: string,
+      target: ClickerTargetsConfigTargetSequenceTarget
+    ) => Promise<void>;
+    /** Removes a target from a given sequence */
+    removeTargetFromSequence: (
+      url: string,
+      sequenceId: string,
+      index: number
+    ) => Promise<void>;
   };
 }
 
@@ -42,21 +46,21 @@ export interface AppData {
  */
 export type ClickerTargetsConfig = Record<
   string,
-  ClickerTargetsConfigTargetGroup[]
+  ClickerTargetsConfigTargetSequence[]
 >;
 
 /** Group of targets for a given URL in `ClickerTargetsConfig` */
-export interface ClickerTargetsConfigTargetGroup {
+export interface ClickerTargetsConfigTargetSequence {
   /** Unique ID assigned to the target group */
   id: string;
   /** Name for the targets group, e.g. "Clip Coupons" */
   name: string;
   /** An array of targets that will be sequentially clicked */
-  targets: ClickerTargetsConfigTargetGroupTarget[];
+  targets: ClickerTargetsConfigTargetSequenceTarget[];
 }
 
 /** Target config within a `ClickerTargetsConfigTargetGroup` */
-export interface ClickerTargetsConfigTargetGroupTarget {
+export interface ClickerTargetsConfigTargetSequenceTarget {
   /** Name for the selector, e.g. "Load More" */
   name: string;
   /** Selector to use when searchng for matching element(s) on page */

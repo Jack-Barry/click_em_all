@@ -6,6 +6,7 @@
   import { StoredOptionsKeys } from "../../lib/data/extensionStorage/constants";
   import TargetsConfigUrl from "../../lib/components/targetsConfig/TargetsConfigUrl.svelte";
   import TargetsConfigUrlEdit from "../../lib/components/targetsConfig/TargetsConfigUrlEdit.svelte";
+  import TargetsConfigSequence from "../../lib/components/targetsConfig/TargetsConfigSequence.svelte";
 
   let targets: ClickerTargetsConfig = {};
 
@@ -94,6 +95,34 @@
 
 <main>
   <h1>Options</h1>
+  <div>
+    <h2>How does it work?</h2>
+    <div>
+      <ul>
+        <li>
+          For each website you want to have a clicking config for, add its URL.
+          Typically you'll want to leave off query params and such.
+        </li>
+        <li>
+          For each URL, you can have more than one named "sequence" of targets
+          to click. For example, if the first target has a strategy of <code
+            >"whenVisible"</code
+          >, and the second has a strategy of <code>"allFound"</code>, the first
+          target will be clicked until it is no longer visible, then the second
+          target will click all matching instances at the same time.
+        </li>
+      </ul>
+    </div>
+  </div>
+  <hr />
+  {#each targetsAsArray as [url, sequences]}
+    <div>
+      <TargetsConfigUrl {url} />
+      {#each sequences as sequence}
+        <TargetsConfigSequence {url} {sequence} />
+      {/each}
+    </div>
+  {/each}
   {#if addingNewUrl}
     <TargetsConfigUrlEdit
       on:saved={async ({ detail }) => {
@@ -105,11 +134,6 @@
   {:else}
     <button on:click={toggleAddingNewUrl}>Add URL</button>
   {/if}
-  {#each targetsAsArray as [url, targetGroups]}
-    <div>
-      <TargetsConfigUrl {url} />
-    </div>
-  {/each}
   <!-- {#each targetGroups as targetGroup}
         <div style="margin-left: 1rem;">
           <div>Group Name: {targetGroup.name}</div>

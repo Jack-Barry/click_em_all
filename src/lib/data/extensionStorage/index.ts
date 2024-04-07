@@ -2,7 +2,8 @@ import Browser from "webextension-polyfill";
 import type {
   AppData,
   ClickerTargetsConfig,
-  ClickerTargetsConfigTargetGroup,
+  ClickerTargetsConfigTargetSequence,
+  ClickerTargetsConfigTargetSequenceTarget,
 } from "../types";
 import { StoredOptionsKeys } from "./constants";
 
@@ -47,66 +48,82 @@ class ExtensionStorage implements AppData {
       await this.#setTargets(data);
     },
 
-    //   addGroup: async (
-    //     url: string,
-    //     group: Omit<ClickerTargetsConfigTargetGroup, "id">
-    //   ) => {
-    //     const existingTargets = await this.targets.get();
-    //     const id = crypto.randomUUID();
-    //     const newTargets: ClickerTargetsConfig = {
-    //       ...existingTargets,
-    //       [url]: [...(existingTargets[url] || []), { ...group, id }],
-    //     };
+    addSequence: async (
+      url: string,
+      group: Omit<ClickerTargetsConfigTargetSequence, "id">
+    ) => {
+      const data = await this.targets.get();
+      const id = crypto.randomUUID();
+      data[url] = [...(data[url] || []), { ...group, id }];
+      await this.#setTargets(data);
+    },
 
-    //     await Browser.storage.local.set({
-    //       [StoredOptionsKeys.targets]: newTargets,
-    //     });
-    //     return { id };
-    //   },
+    editSequence: async (
+      url: string,
+      sequenceId: string,
+      sequence: Partial<
+        Omit<ClickerTargetsConfigTargetSequence, "id" | "targets">
+      >
+    ) => {
+      const data = await this.targets.get();
+      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      data[url] = [
+        ...data[url].slice(0, sequenceIndex),
+        { ...data[url][sequenceIndex], ...sequence },
+        ...data[url].slice(sequenceIndex + 1),
+      ];
+      await this.#setTargets(data);
+    },
 
-    //   getGroups: async (url: string) => {
-    //     const data = await this.targets.get();
-    //     return data[url];
-    //   },
+    removeSequence: async (url: string, sequenceId: string) => {
+      const data = await this.targets.get();
+      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      data[url] = [
+        ...data[url].slice(0, sequenceIndex),
+        ...data[url].slice(sequenceIndex + 1),
+      ];
 
-    //   editGroup: async (
-    //     url: string,
-    //     groupId: string,
-    //     data: Partial<Omit<ClickerTargetsConfigTargetGroup, "id">>
-    //   ) => {
-    //     const existingTargets = await this.targets.get();
-    //     const groupIndex = existingTargets[url].findIndex(
-    //       (v) => v.id === groupId
-    //     );
-    //     const newTargets: ClickerTargetsConfig = {
-    //       ...existingTargets,
-    //       [url]: [
-    //         ...existingTargets[url].slice(0, groupIndex),
-    //         { ...existingTargets[url][groupIndex], ...data },
-    //         ...existingTargets[url].slice(groupIndex + 1),
-    //       ],
-    //     };
-    //     await Browser.storage.local.set({
-    //       [StoredOptionsKeys.targets]: newTargets,
-    //     });
-    //   },
+      await this.#setTargets(data);
+    },
 
-    //   removeGroup: async (url: string, groupId: string) => {
-    //     const existingTargets = await this.targets.get();
-    //     const groupIndex = existingTargets[url].findIndex(
-    //       (v) => v.id === groupId
-    //     );
-    //     const newTargets: ClickerTargetsConfig = {
-    //       ...existingTargets,
-    //       [url]: [
-    //         ...existingTargets[url].slice(0, groupIndex),
-    //         ...existingTargets[url].slice(groupIndex + 1),
-    //       ],
-    //     };
-    //     await Browser.storage.local.set({
-    //       [StoredOptionsKeys.targets]: newTargets,
-    //     });
-    //   },
+    addTargetToSequence: async (
+      url: string,
+      sequenceId: string,
+      target: ClickerTargetsConfigTargetSequenceTarget
+    ) => {
+      const data = await this.targets.get();
+      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      data[url] = [
+        ...data[url].slice(0, sequenceIndex),
+        {
+          ...data[url][sequenceIndex],
+          targets: [...data[url][sequenceIndex].targets, target],
+        },
+        ...data[url].slice(sequenceIndex + 1),
+      ];
+      await this.#setTargets(data);
+    },
+
+    removeTargetFromSequence: async (
+      url: string,
+      sequenceId: string,
+      targetIndex: number
+    ) => {
+      const data = await this.targets.get();
+      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      data[url] = [
+        ...data[url].slice(0, sequenceIndex),
+        {
+          ...data[url][sequenceIndex],
+          targets: [
+            ...data[url][sequenceIndex].targets.slice(0, targetIndex),
+            ...data[url][sequenceIndex].targets.slice(targetIndex + 1),
+          ],
+        },
+        ...data[url].slice(sequenceIndex + 1),
+      ];
+      await this.#setTargets(data);
+    },
   };
 
   #setTargets = async (data: ClickerTargetsConfig) => {
