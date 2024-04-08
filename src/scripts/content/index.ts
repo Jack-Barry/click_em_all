@@ -1,20 +1,15 @@
 import { onMessage, sendMessage } from "webext-bridge/content-script";
-import {
-  Clicker,
-  ClickerTargetStrategyType,
-  type ClickerTarget,
-} from "../../lib/Clicker/Clicker";
 import { ClickerEvent, ClickerEventType } from "../../lib/Clicker/ClickerEvent";
+import { Clicker } from "../../lib/Clicker/Clicker";
+import type { ClickerTargetsConfigTargetSequenceTarget } from "../../lib/data/types";
 
 console.log("🏁 Initializing Click 'em All...");
 
 const clicker = new Clicker();
+
+// Relay clicker events to popup
 clicker.addEventListener(ClickerEventType.beginClicking, (e) => {
   sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.beginClicking>);
-});
-
-clicker.addEventListener(ClickerEventType.endClicking, (e) => {
-  sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.endClicking>);
 });
 
 clicker.addEventListener(ClickerEventType.foundElements, (e) => {
@@ -33,11 +28,16 @@ clicker.addEventListener(ClickerEventType.clickedElements, (e) => {
   );
 });
 
+clicker.addEventListener(ClickerEventType.endClicking, (e) => {
+  sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.endClicking>);
+});
+
+// Respond to request from popup to "click 'em all"
 onMessage("clickEmAll", async (msg) => {
   console.log("🔨 Clickin' 'em all");
-
-  console.log({ msg });
-  await clicker.clickEmAll(msg.data as ClickerTarget[]);
+  await clicker.clickEmAll(
+    msg.data as ClickerTargetsConfigTargetSequenceTarget[]
+  );
 });
 
 console.log("Click 'em All Initialized 🤘");
