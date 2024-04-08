@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { ClickerTargetStrategyType } from "../../Clicker/Clicker";
-  import type { ClickerTargetsConfigTargetSequenceTarget } from "../../data/types";
-  import { objectFromFormData } from "../../forms";
+  import { ClickerTargetStrategyType } from "../../../../lib/Clicker/Clicker";
+  import type { ClickerTargetsConfigTargetSequenceTarget } from "../../../../lib/data/types";
+  import { objectFromFormData } from "../../../../lib/forms";
 
   export let target: ClickerTargetsConfigTargetSequenceTarget;
 

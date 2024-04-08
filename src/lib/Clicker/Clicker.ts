@@ -1,3 +1,4 @@
+import type { ClickerTargetsConfigTargetSequenceTarget } from "../data/types";
 import { ClickerEvent, ClickerEventType } from "./ClickerEvent";
 
 export enum ClickerTargetStrategyType {
@@ -5,24 +6,13 @@ export enum ClickerTargetStrategyType {
   whilePresent = "whilePresent",
 }
 
-interface ClickerTargetStrategy {
-  type: ClickerTargetStrategyType;
-  maxClicks?: number;
-}
-
-export interface ClickerTarget {
-  selector: string;
-  name?: string;
-  strategy: ClickerTargetStrategy;
-}
-
-export interface ClickerTargetWithId extends ClickerTarget {
+export interface ClickerTargetWithId
+  extends ClickerTargetsConfigTargetSequenceTarget {
   id: string;
-  name: string;
 }
 
 export class Clicker extends EventTarget {
-  clickEmAll = async (targets: ClickerTarget[]) => {
+  clickEmAll = async (targets: ClickerTargetsConfigTargetSequenceTarget[]) => {
     this.dispatchEvent(new ClickerEvent(ClickerEventType.beginClicking));
 
     for (const target of targets.map((t) => ({
@@ -30,7 +20,7 @@ export class Clicker extends EventTarget {
       id: crypto.randomUUID(),
       name: t.name || t.selector,
     }))) {
-      switch (target.strategy.type) {
+      switch (target.strategy) {
         case ClickerTargetStrategyType.whilePresent: {
           this.#clickButtonWhilePresent(target);
           break;
@@ -47,8 +37,7 @@ export class Clicker extends EventTarget {
   };
 
   #clickButtonWhilePresent = (target: ClickerTargetWithId) => {
-    const { selector, strategy } = target;
-    const { maxClicks = Infinity } = strategy;
+    const { selector, maxClicks = Infinity } = target;
     let count = 0;
     let loadMoreButton: HTMLButtonElement | undefined = getButton(selector);
 
@@ -73,8 +62,7 @@ export class Clicker extends EventTarget {
   };
 
   #clickAllMatchingElements = (target: ClickerTargetWithId) => {
-    const { selector, strategy } = target;
-    const { maxClicks = Infinity } = strategy;
+    const { selector, maxClicks = Infinity } = target;
     const elements = document.querySelectorAll(
       selector
     ) as NodeListOf<HTMLButtonElement>;
@@ -94,7 +82,7 @@ export class Clicker extends EventTarget {
         break;
       }
 
-      // el.click();
+      el.click();
       clickedCount++;
     }
 

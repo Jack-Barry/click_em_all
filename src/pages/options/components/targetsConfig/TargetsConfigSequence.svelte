@@ -1,12 +1,11 @@
 <script lang="ts">
-  import app from "../../../pages/options";
-  import { ClickerTargetStrategyType } from "../../Clicker/Clicker";
-  import { appStorage } from "../../data/extensionStorage";
+  import { ClickerTargetStrategyType } from "../../../../lib/Clicker/Clicker";
+  import { appStorage } from "../../../../lib/data/extensionStorage";
   import type {
     ClickerTargetsConfigTargetSequence,
     ClickerTargetsConfigTargetSequenceTarget,
-  } from "../../data/types";
-  import { objectFromFormData } from "../../forms";
+  } from "../../../../lib/data/types";
+  import { objectFromFormData } from "../../../../lib/forms";
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
 
   export let url: string;

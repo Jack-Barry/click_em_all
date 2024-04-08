@@ -17,12 +17,12 @@ export enum ClickerEventType {
   endClicking = "endClicking",
 }
 
-type ClickerEventDetail<Type extends ClickerEventType> = Type extends
+export type ClickerEventDetail<Type extends ClickerEventType> = Type extends
   | ClickerEventType.beginClicking
   | ClickerEventType.endClicking
   ? undefined
   : Type extends ClickerEventType.maxClicksReached
-  ? { target: ClickerTargetWithId }
+  ? { target: ClickerTargetWithId; count?: undefined }
   : Type extends
       | ClickerEventType.foundElements
       | ClickerEventType.clickedElements

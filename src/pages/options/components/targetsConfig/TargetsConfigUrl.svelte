@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { appStorage } from "../../data/extensionStorage";
+  import { appStorage } from "../../../../lib/data/extensionStorage";
   import TargetsConfigUrlEdit from "./TargetsConfigUrlEdit.svelte";
 
   export let url: string;
