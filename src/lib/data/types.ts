@@ -1,7 +1,7 @@
-import type { ClickerTargetStrategyType } from "../Clicker/Clicker";
+import type { ClickerTarget } from "../Clicker/Clicker";
 
 /** Interface to interact with app's data */
-export interface AppData {
+export interface DataService {
   targets: {
     /** Retrieves all stored targets data */
     get: () => Promise<ClickerTargetsConfig>;
@@ -28,7 +28,14 @@ export interface AppData {
     addTargetToSequence: (
       url: string,
       sequenceId: string,
-      target: ClickerTargetsConfigTargetSequenceTarget
+      target: ClickerTarget
+    ) => Promise<void>;
+    /** Edits an existing target within a sequence */
+    editTarget: (
+      url: string,
+      sequenceId: string,
+      index: number,
+      target: ClickerTarget
     ) => Promise<void>;
     /** Removes a target from a given sequence */
     removeTargetFromSequence: (
@@ -56,17 +63,5 @@ export interface ClickerTargetsConfigTargetSequence {
   /** Name for the targets group, e.g. "Clip Coupons" */
   name: string;
   /** An array of targets that will be sequentially clicked */
-  targets: ClickerTargetsConfigTargetSequenceTarget[];
-}
-
-/** Target config within a `ClickerTargetsConfigTargetGroup` */
-export interface ClickerTargetsConfigTargetSequenceTarget {
-  /** Name for the selector, e.g. "Load More" */
-  name: string;
-  /** Selector to use when searchng for matching element(s) on page */
-  selector: string;
-  /** Strategy to use when clicking matching element(s) */
-  strategy: ClickerTargetStrategyType;
-  /** Optional max number of clicks to invoke before moving onto the next target */
-  maxClicks?: number;
+  targets: ClickerTarget[];
 }

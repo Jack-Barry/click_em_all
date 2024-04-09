@@ -20,8 +20,6 @@
         [targetId]: [...(statuses[targetId] || []), data],
       });
     }
-
-    console.log("handled event", { statuses });
   });
 </script>
 

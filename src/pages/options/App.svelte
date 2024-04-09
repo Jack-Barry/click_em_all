@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { ClickerTargetsConfig } from "../../lib/data/types";
-  import { appStorage } from "../../lib/data/extensionStorage";
+  import {
+    ExtensionStorage,
+    appStorage,
+  } from "../../lib/data/extensionStorage";
   import Browser from "webextension-polyfill";
-  import { StoredOptionsKeys } from "../../lib/data/extensionStorage/constants";
   import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
   import TargetsConfigUrlEdit from "./components/targetsConfig/TargetsConfigUrlEdit.svelte";
   import TargetsConfigSequence from "./components/targetsConfig/TargetsConfigSequence.svelte";
@@ -20,8 +22,8 @@
   onMount(async () => {
     targets = await appStorage.targets.get();
     Browser.storage.local.onChanged.addListener((changes) => {
-      if (changes[StoredOptionsKeys.targets]?.newValue) {
-        targets = changes[StoredOptionsKeys.targets]?.newValue;
+      if (changes[ExtensionStorage.STORAGE_KEYS.TARGETS]?.newValue) {
+        targets = changes[ExtensionStorage.STORAGE_KEYS.TARGETS]?.newValue;
       }
     });
   });
@@ -35,15 +37,18 @@
       <ul>
         <li>
           For each website you want to have a clicking config for, add its URL.
-          Typically you'll want to leave off query params and such.
+          Typically you'll want to leave off query params and such, since as you
+          navigate, URLs from the current tab are matched by prefixes in your
+          config.
         </li>
         <li>
           For each URL, you can have more than one named "sequence" of targets
-          to click. For example, if the first target has a strategy of <code
-            >"whenVisible"</code
-          >, and the second has a strategy of <code>"allFound"</code>, the first
-          target will be clicked until it is no longer visible, then the second
-          target will click all matching instances at the same time.
+          to click.
+        </li>
+        <li>
+          Each "sequence" of targets will be iterated over when you click its
+          triggering button. The triggering button will be visible any time you
+          are on a page that has a URL beginning with the sequence's parent URL.
         </li>
       </ul>
     </div>

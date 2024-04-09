@@ -1,4 +1,4 @@
-import type { ClickerTargetWithId } from "./Clicker";
+import { ClickerTargetStrategyType, type ClickerTargetWithId } from "./Clicker";
 
 /** Event emitted by a `Clicker` instance */
 export class ClickerEvent<
@@ -22,7 +22,8 @@ export type ClickerEventDetail<Type extends ClickerEventType> = Type extends
   | ClickerEventType.endClicking
   ? undefined
   : Type extends ClickerEventType.maxClicksReached
-  ? { target: ClickerTargetWithId; count?: undefined }
+  ? // TODO: shouldn't need `count` in this type
+    { target: ClickerTargetWithId; count?: undefined }
   : Type extends
       | ClickerEventType.foundElements
       | ClickerEventType.clickedElements

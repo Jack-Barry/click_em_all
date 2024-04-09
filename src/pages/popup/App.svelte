@@ -2,17 +2,14 @@
   import { onMount } from "svelte";
   import browser, { type Tabs } from "webextension-polyfill";
   import { sendMessage } from "webext-bridge/popup";
-  import { openOptionsPage } from "../../lib/utils";
-  import type {
-    ClickerTargetsConfigTargetSequence,
-    ClickerTargetsConfigTargetSequenceTarget,
-  } from "../../lib/data/types";
+  import type { ClickerTargetsConfigTargetSequence } from "../../lib/data/types";
   import { appStorage } from "../../lib/data/extensionStorage";
   import {
     ClickerEventType,
     type ClickerEvent,
   } from "../../lib/Clicker/ClickerEvent";
   import ClickerStatus from "./components/clicker/ClickerStatus.svelte";
+  import type { ClickerTarget } from "../../lib/Clicker/Clicker";
 
   let activeTab: Tabs.Tab | undefined;
   let matchingSequences: ClickerTargetsConfigTargetSequence[] = [];
@@ -31,8 +28,12 @@
     }
   });
 
+  async function openOptionsPage() {
+    await browser.runtime.openOptionsPage();
+  }
+
   let clickerStatuses: Record<string, ClickerEvent<ClickerEventType>[]> = {};
-  function clickEmAll(targets: ClickerTargetsConfigTargetSequenceTarget[]) {
+  function clickEmAll(targets: ClickerTarget[]) {
     clickerStatuses = {};
     if (!activeTab?.id) {
       return;

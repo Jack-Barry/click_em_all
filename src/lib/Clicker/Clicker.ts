@@ -1,30 +1,49 @@
-import type { ClickerTargetsConfigTargetSequenceTarget } from "../data/types";
 import { ClickerEvent, ClickerEventType } from "./ClickerEvent";
 
+/** Strategy that can be used for a given `ClickerTarget` */
 export enum ClickerTargetStrategyType {
+  /** Click all targets immediately once found */
   allFound = "allFound",
+  /** Click first element matching target while it is still present on the page */
   whilePresent = "whilePresent",
 }
 
-export interface ClickerTargetWithId
-  extends ClickerTargetsConfigTargetSequenceTarget {
+/** Target config that can be acted on by `Clicker` instance */
+export interface ClickerTarget {
+  /** Name for the selector, e.g. "Load More" */
+  name: string;
+  /** Selector to use when searchng for matching element(s) on page */
+  selector: string;
+  /** Strategy to use when clicking matching element(s) */
+  strategy: ClickerTargetStrategyType;
+  /** Optional max number of clicks to invoke before moving onto the next target */
+  maxClicks?: number;
+}
+
+/**
+ * At runtime, a unique ID is assigned to each target within the currently running
+ *   sequence
+ */
+export interface ClickerTargetWithId extends ClickerTarget {
   id: string;
 }
 
 export class Clicker extends EventTarget {
-  clickEmAll = async (targets: ClickerTargetsConfigTargetSequenceTarget[]) => {
+  clickEmAll = async (targets: ClickerTarget[]) => {
     this.dispatchEvent(new ClickerEvent(ClickerEventType.beginClicking));
 
-    for (const target of targets.map((t) => ({
+    const targetsWithIds = targets.map((t) => ({
       ...t,
       id: crypto.randomUUID(),
-      name: t.name || t.selector,
-    }))) {
+    }));
+
+    for (const target of targetsWithIds) {
       switch (target.strategy) {
         case ClickerTargetStrategyType.whilePresent: {
-          this.#clickButtonWhilePresent(target);
+          this.#clickElementWhilePresent(target);
           break;
         }
+
         case ClickerTargetStrategyType.allFound:
         default: {
           this.#clickAllMatchingElements(target);
@@ -36,15 +55,16 @@ export class Clicker extends EventTarget {
     this.dispatchEvent(new ClickerEvent(ClickerEventType.endClicking));
   };
 
-  #clickButtonWhilePresent = (target: ClickerTargetWithId) => {
+  #clickElementWhilePresent = (target: ClickerTargetWithId) => {
     const { selector, maxClicks = Infinity } = target;
     let count = 0;
-    let loadMoreButton: HTMLButtonElement | undefined = getButton(selector);
+    let element: HTMLButtonElement | undefined =
+      getFirstMatchingElement(selector);
 
-    while (loadMoreButton && count < maxClicks) {
-      loadMoreButton.click();
+    while (element && count < maxClicks) {
+      element.click();
       count++;
-      loadMoreButton = getButton(selector);
+      element = getFirstMatchingElement(selector);
     }
 
     if (count === maxClicks) {
@@ -95,8 +115,8 @@ export class Clicker extends EventTarget {
   };
 }
 
-function getButton(selector: string) {
-  const loadMoreButtons = document.querySelectorAll(selector);
-  const loadMoreButton = loadMoreButtons[0] as HTMLButtonElement | undefined;
+function getFirstMatchingElement(selector: string) {
+  const matchingElements = document.querySelectorAll(selector);
+  const loadMoreButton = matchingElements[0] as HTMLButtonElement | undefined;
   return loadMoreButton;
 }

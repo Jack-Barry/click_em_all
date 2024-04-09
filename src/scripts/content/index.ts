@@ -1,7 +1,6 @@
 import { onMessage, sendMessage } from "webext-bridge/content-script";
 import { ClickerEvent, ClickerEventType } from "../../lib/Clicker/ClickerEvent";
-import { Clicker } from "../../lib/Clicker/Clicker";
-import type { ClickerTargetsConfigTargetSequenceTarget } from "../../lib/data/types";
+import { Clicker, type ClickerTarget } from "../../lib/Clicker/Clicker";
 
 console.log("🏁 Initializing Click 'em All...");
 
@@ -35,9 +34,7 @@ clicker.addEventListener(ClickerEventType.endClicking, (e) => {
 // Respond to request from popup to "click 'em all"
 onMessage("clickEmAll", async (msg) => {
   console.log("🔨 Clickin' 'em all");
-  await clicker.clickEmAll(
-    msg.data as ClickerTargetsConfigTargetSequenceTarget[]
-  );
+  await clicker.clickEmAll(msg.data as ClickerTarget[]);
 });
 
 console.log("Click 'em All Initialized 🤘");

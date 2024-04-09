@@ -18,18 +18,18 @@
     }
   }
 
-  let errorMessage: string;
+  let saveError: string;
   async function handleSave({ detail }: CustomEvent) {
-    errorMessage = "";
+    saveError = "";
     try {
       await appStorage.targets.moveUrl(detail.oldUrl, detail.newUrl);
       editMode = false;
     } catch (e) {
       const message = (e as Error).message;
       if (message) {
-        errorMessage = message;
+        saveError = message;
       } else {
-        errorMessage = "Encountered an error, unable to save";
+        saveError = "Encountered an error, unable to save";
       }
     }
   }
@@ -52,7 +52,7 @@
     <div>
       <TargetsConfigUrlEdit
         {url}
-        {errorMessage}
+        errorMessage={saveError}
         on:saved={handleSave}
         on:cancelled={toggleEditMode}
       />
@@ -65,8 +65,8 @@
       {#if addingSequenceToUrl}
         <form on:submit|preventDefault={handleAddSequenceToUrl}>
           <header>New Sequence</header>
-          <label for="sequence_name">Name</label>
-          <input name="sequence_name" bind:value={newSequenceName} />
+          <label for="name">Name</label>
+          <input name="name" bind:value={newSequenceName} />
           <button type="button" on:click={toggleAddingSequenceToUrl}>
             Cancel
           </button>
