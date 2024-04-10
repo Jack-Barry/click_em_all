@@ -29,13 +29,13 @@ export class ExtensionStorage implements DataService {
       }
 
       data[url] = [];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     removeUrl: async (url: string) => {
       const data = await this.targets.get();
       delete data[url];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     moveUrl: async (oldUrl: string, newUrl: string) => {
@@ -51,7 +51,7 @@ export class ExtensionStorage implements DataService {
       const target = data[oldUrl];
       data[newUrl] = target;
       delete data[oldUrl];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     addSequence: async (
@@ -61,7 +61,7 @@ export class ExtensionStorage implements DataService {
       const data = await this.targets.get();
       const id = crypto.randomUUID();
       data[url] = [...(data[url] || []), { ...group, id }];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     editSequence: async (
@@ -72,24 +72,25 @@ export class ExtensionStorage implements DataService {
       >
     ) => {
       const data = await this.targets.get();
-      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      const sequenceIndex = getSequenceIndex(data, url, sequenceId);
+
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         { ...data[url][sequenceIndex], ...sequence },
         ...data[url].slice(sequenceIndex + 1),
       ];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     removeSequence: async (url: string, sequenceId: string) => {
       const data = await this.targets.get();
-      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      const sequenceIndex = getSequenceIndex(data, url, sequenceId);
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         ...data[url].slice(sequenceIndex + 1),
       ];
 
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     addTargetToSequence: async (
@@ -98,7 +99,7 @@ export class ExtensionStorage implements DataService {
       target: ClickerTarget
     ) => {
       const data = await this.targets.get();
-      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      const sequenceIndex = getSequenceIndex(data, url, sequenceId);
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         {
@@ -107,7 +108,7 @@ export class ExtensionStorage implements DataService {
         },
         ...data[url].slice(sequenceIndex + 1),
       ];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     editTarget: async (
@@ -117,8 +118,12 @@ export class ExtensionStorage implements DataService {
       target: Partial<ClickerTarget>
     ) => {
       const data = await this.targets.get();
-      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      const sequenceIndex = getSequenceIndex(data, url, sequenceId);
       const existingTarget = data[url][sequenceIndex].targets[index];
+      if (!existingTarget) {
+        throw new Error(`No target found at index: ${index}`);
+      }
+
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         {
@@ -131,7 +136,7 @@ export class ExtensionStorage implements DataService {
         },
         ...data[url].slice(sequenceIndex + 1),
       ];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
 
     removeTargetFromSequence: async (
@@ -140,7 +145,7 @@ export class ExtensionStorage implements DataService {
       targetIndex: number
     ) => {
       const data = await this.targets.get();
-      const sequenceIndex = data[url].findIndex((v) => v.id === sequenceId);
+      const sequenceIndex = getSequenceIndex(data, url, sequenceId);
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         {
@@ -152,15 +157,33 @@ export class ExtensionStorage implements DataService {
         },
         ...data[url].slice(sequenceIndex + 1),
       ];
-      await this.#setTargets(data);
+      await setTargets(data);
     },
   };
+}
 
-  #setTargets = async (data: ClickerTargetsConfig) => {
-    return await Browser.storage.local.set({
-      [ExtensionStorage.STORAGE_KEYS.TARGETS]: data,
-    });
-  };
+async function setTargets(data: ClickerTargetsConfig) {
+  return await Browser.storage.local.set({
+    [ExtensionStorage.STORAGE_KEYS.TARGETS]: data,
+  });
+}
+
+function getSequenceIndex(
+  data: ClickerTargetsConfig,
+  url: string,
+  sequenceId: string
+) {
+  const urlData = data[url];
+  if (!urlData) {
+    throw new Error(`No data available for URL: ${url}`);
+  }
+
+  const sequenceIndex = urlData.findIndex((v) => v.id === sequenceId);
+  if (sequenceIndex < 0) {
+    throw new Error(`No sequence found matching ID: ${sequenceId}`);
+  }
+
+  return sequenceIndex;
 }
 
 export const appStorage = new ExtensionStorage();

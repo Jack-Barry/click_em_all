@@ -58,13 +58,12 @@ export class Clicker extends EventTarget {
   #clickElementWhilePresent = (target: ClickerTargetWithId) => {
     const { selector, maxClicks = Infinity } = target;
     let count = 0;
-    let element: HTMLButtonElement | undefined =
-      getFirstMatchingElement(selector);
+    let element: HTMLElement | null = document.querySelector(selector);
 
     while (element && count < maxClicks) {
       element.click();
       count++;
-      element = getFirstMatchingElement(selector);
+      element = document.querySelector(selector);
     }
 
     if (count === maxClicks) {
@@ -85,7 +84,7 @@ export class Clicker extends EventTarget {
     const { selector, maxClicks = Infinity } = target;
     const elements = document.querySelectorAll(
       selector
-    ) as NodeListOf<HTMLButtonElement>;
+    ) as NodeListOf<HTMLElement>;
     this.dispatchEvent(
       new ClickerEvent(ClickerEventType.foundElements, {
         target,
@@ -94,7 +93,7 @@ export class Clicker extends EventTarget {
     );
 
     let clickedCount = 0;
-    for (const el of elements) {
+    for (const element of elements) {
       if (clickedCount >= maxClicks) {
         this.dispatchEvent(
           new ClickerEvent(ClickerEventType.maxClicksReached, { target })
@@ -102,7 +101,7 @@ export class Clicker extends EventTarget {
         break;
       }
 
-      el.click();
+      element.click();
       clickedCount++;
     }
 
@@ -113,10 +112,4 @@ export class Clicker extends EventTarget {
       })
     );
   };
-}
-
-function getFirstMatchingElement(selector: string) {
-  const matchingElements = document.querySelectorAll(selector);
-  const loadMoreButton = matchingElements[0] as HTMLButtonElement | undefined;
-  return loadMoreButton;
 }
