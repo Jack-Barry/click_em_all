@@ -20,9 +20,9 @@
 
 <form on:submit|preventDefault={onSave}>
   <div>
-    <label for="url">URL</label>
+    <label for="url_input">URL</label>
     <!-- svelte-ignore a11y-autofocus -- Makes sense to move into this field when form is rendered -->
-    <input name="url" bind:value={newUrl} autofocus />
+    <input id="url_input" name="url" bind:value={newUrl} autofocus />
     {#if errorMessage}
       <div>{errorMessage}</div>
     {/if}

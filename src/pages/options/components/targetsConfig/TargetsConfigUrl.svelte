@@ -38,7 +38,17 @@
     await appStorage.targets.removeUrl(url);
   }
 
+  let addSequenceError: string = "";
   async function handleAddSequenceToUrl() {
+    addSequenceError = "";
+    if (!newSequenceName) {
+      addSequenceError = "Name for new sequence is required";
+    }
+
+    if (addSequenceError) {
+      return;
+    }
+
     await appStorage.targets.addSequence(url, {
       name: newSequenceName,
       targets: [],
@@ -65,8 +75,15 @@
       {#if addingSequenceToUrl}
         <form on:submit|preventDefault={handleAddSequenceToUrl}>
           <header>New Sequence</header>
-          <label for="name">Name</label>
-          <input name="name" bind:value={newSequenceName} />
+          <label for="new_sequence_name">Name</label>
+          <input
+            id="new_sequence_name"
+            name="name"
+            bind:value={newSequenceName}
+          />
+          {#if addSequenceError}
+            <div>{addSequenceError}</div>
+          {/if}
           <button type="button" on:click={toggleAddingSequenceToUrl}>
             Cancel
           </button>

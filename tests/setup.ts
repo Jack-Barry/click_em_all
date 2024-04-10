@@ -1,3 +1,6 @@
+import "@testing-library/svelte/vitest";
+import "@testing-library/jest-dom/vitest";
+
 /**
  * Need to set `chrome.runtime.id` for `webextension-polyfill` to be mockable during
  *   tests, per https://github.com/mozilla/webextension-polyfill/issues/218#issuecomment-584936358
