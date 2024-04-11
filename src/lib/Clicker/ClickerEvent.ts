@@ -10,6 +10,7 @@ export class ClickerEvent<
 }
 
 export enum ClickerEventType {
+  error = "error",
   beginClicking = "beginClicking",
   foundElements = "foundElements",
   maxClicksReached = "maxClicksReached",

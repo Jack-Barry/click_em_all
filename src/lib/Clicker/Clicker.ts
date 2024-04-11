@@ -20,24 +20,29 @@ export class Clicker extends EventTarget {
   clickEmAll = async (targets: ClickerTarget[]) => {
     this.dispatchEvent(new ClickerEvent(ClickerEventType.beginClicking));
 
-    const targetsWithIds = targets.map((t) => ({
-      ...t,
-      id: crypto.randomUUID(),
-    }));
+    try {
+      const targetsWithIds = targets.map((t) => ({
+        ...t,
+        id: crypto.randomUUID(),
+      }));
 
-    for (const target of targetsWithIds) {
-      switch (target.strategy) {
-        case ClickerTargetStrategyType.whilePresent: {
-          this.#clickElementWhilePresent(target);
-          break;
-        }
+      for (const target of targetsWithIds) {
+        switch (target.strategy) {
+          case ClickerTargetStrategyType.whilePresent: {
+            this.#clickElementWhilePresent(target);
+            break;
+          }
 
-        case ClickerTargetStrategyType.allFound:
-        default: {
-          this.#clickAllMatchingElements(target);
-          break;
+          case ClickerTargetStrategyType.allFound:
+          default: {
+            this.#clickAllMatchingElements(target);
+            break;
+          }
         }
       }
+    } catch (e) {
+      this.dispatchEvent(new ClickerEvent(ClickerEventType.error, e));
+      throw e;
     }
 
     this.dispatchEvent(new ClickerEvent(ClickerEventType.endClicking));

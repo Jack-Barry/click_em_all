@@ -7,6 +7,10 @@ console.log("🏁 Initializing Click 'em All...");
 const clicker = new Clicker();
 
 // Relay clicker events to popup
+clicker.addEventListener(ClickerEventType.error, (e) => {
+  sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.error>);
+});
+
 clicker.addEventListener(ClickerEventType.beginClicking, (e) => {
   sendClickEmAllEventToPopup(e as ClickerEvent<ClickerEventType.beginClicking>);
 });
