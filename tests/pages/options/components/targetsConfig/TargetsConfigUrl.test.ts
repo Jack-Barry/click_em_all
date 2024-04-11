@@ -3,6 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { expect, test } from "vitest";
 import TargetsConfigUrl from "../../../../../src/pages/options/components/targetsConfig/TargetsConfigUrl.svelte";
 import { appStorage } from "../../../../../src/lib/data/extensionStorage";
+import { clickerTargetSequenceSchema } from "../../../../../src/lib/data/schemas";
 
 describe("TargetsConfigUrl", () => {
   describe("when editMode is false", () => {
@@ -66,16 +67,29 @@ describe("TargetsConfigUrl", () => {
       test("error is presented when new sequence name is empty", async () => {
         render(TargetsConfigUrl, { url: "testurl" });
         await userEvent.click(getAddSequenceButton());
+        const expectedParseResult = clickerTargetSequenceSchema
+          .omit({ id: true, targets: true })
+          .safeParse({ name: "" });
+        if (expectedParseResult.success) {
+          throw new Error("should be error when parsing");
+        }
+        const expectedErrorMessage = expectedParseResult.error.errors
+          .map((e) => e.message)
+          .join(", ");
 
+        expect(screen.getByText("Save")).toBeDisabled();
+        await userEvent.type(screen.getByLabelText("Name"), "Name");
+        expect(screen.getByText("Save")).toBeEnabled();
+
+        await userEvent.clear(screen.getByLabelText("Name"));
         expect(
-          screen.queryByText("Name for new sequence is required")
+          screen.queryByText(expectedErrorMessage)
         ).not.toBeInTheDocument();
-        await userEvent.click(screen.getByText("Save"));
+        expect(screen.getByText("Save")).toBeDisabled();
 
-        expect(mockAddSequence).not.toHaveBeenCalled();
-        expect(
-          screen.getByText("Name for new sequence is required")
-        ).toBeVisible();
+        // Error message shows once user has left the field empty
+        await userEvent.click(screen.getByText("Save"));
+        expect(screen.getByText(expectedErrorMessage)).toBeVisible();
         expect(screen.getByText("New Sequence")).toBeVisible();
         expect(screen.getByLabelText("Name")).toBeVisible();
         expect(screen.getByText("Cancel")).toBeVisible();
@@ -88,6 +102,7 @@ describe("TargetsConfigUrl", () => {
           screen.getByLabelText("Name"),
           "New Sequence Name"
         );
+        expect(screen.getByText("Save")).toBeEnabled();
         await userEvent.click(screen.getByText("Save"));
 
         expect(mockAddSequence).toHaveBeenCalledOnce();

@@ -10,9 +10,13 @@ export enum ClickerTargetStrategyType {
 
 export const clickerTargetSchema = z.object({
   /** Name for the selector, e.g. "Load More" */
-  name: z.string(),
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(2, "Name must be at least 2 characters long"),
   /** Selector to use when searchng for matching element(s) on page */
-  selector: z.string(),
+  selector: z
+    .string({ required_error: "An element selector must be specified" })
+    .min(1, "Selector must be a non-empty string"),
   /** Strategy to use when clicking matching element(s) */
   strategy: z.nativeEnum(ClickerTargetStrategyType),
   /** Optional max number of clicks to invoke before moving onto the next target */

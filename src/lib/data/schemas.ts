@@ -3,10 +3,12 @@ import { clickerTargetSchema } from "../Clicker/schemas";
 
 /** Schema for a clicker target sequence */
 export const clickerTargetSequenceSchema = z.object({
-  /** Unique ID assigned to the target group */
+  /** Unique ID assigned to the sequence */
   id: z.string(),
-  /** Name for the targets group, e.g. "Clip Coupons" */
-  name: z.string(),
+  /** Name for the sequence, e.g. "Clip Coupons" */
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(1, "Name must be a non-empty string"),
   /** An array of targets that will be sequentially clicked */
   targets: z.array(clickerTargetSchema),
 });
@@ -15,3 +17,5 @@ export const clickerTargetSequenceSchema = z.object({
 export const clickerTargetsConfigSchema = z
   .object({})
   .catchall(z.array(clickerTargetSequenceSchema));
+
+export const clickerTargetUrlSchema = z.string().min(2);
