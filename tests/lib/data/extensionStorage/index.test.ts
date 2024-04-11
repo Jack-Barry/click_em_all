@@ -4,7 +4,7 @@ import {
   appStorage,
 } from "../../../../src/lib/data/extensionStorage";
 import type { ClickerTargetsConfig } from "../../../../src/lib/data/types";
-import { ClickerTargetStrategyType } from "../../../../src/lib/Clicker/Clicker";
+import { ClickerTargetStrategyType } from "../../../../src/lib/Clicker/schemas";
 
 describe("Data: using Extension Storage: targets", () => {
   let mockData: ClickerTargetsConfig;

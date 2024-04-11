@@ -1,4 +1,4 @@
-import { ClickerTargetStrategyType, type ClickerTargetWithId } from "./Clicker";
+import { type ClickerTargetWithId } from "./Clicker";
 
 /** Event emitted by a `Clicker` instance */
 export class ClickerEvent<

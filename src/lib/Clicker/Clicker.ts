@@ -1,32 +1,20 @@
+import { z } from "zod";
 import { ClickerEvent, ClickerEventType } from "./ClickerEvent";
-
-/** Strategy that can be used for a given `ClickerTarget` */
-export enum ClickerTargetStrategyType {
-  /** Click all targets immediately once found */
-  allFound = "allFound",
-  /** Click first element matching target while it is still present on the page */
-  whilePresent = "whilePresent",
-}
+import { ClickerTargetStrategyType, clickerTargetSchema } from "./schemas";
 
 /** Target config that can be acted on by `Clicker` instance */
-export interface ClickerTarget {
-  /** Name for the selector, e.g. "Load More" */
-  name: string;
-  /** Selector to use when searchng for matching element(s) on page */
-  selector: string;
-  /** Strategy to use when clicking matching element(s) */
-  strategy: ClickerTargetStrategyType;
-  /** Optional max number of clicks to invoke before moving onto the next target */
-  maxClicks?: number;
-}
+export type ClickerTarget = z.infer<typeof clickerTargetSchema>;
+
+const clickerTargetWithIdSchema = clickerTargetSchema.extend({
+  /** ID assigned to the target at run time */
+  id: z.string({}),
+});
 
 /**
  * At runtime, a unique ID is assigned to each target within the currently running
  *   sequence
  */
-export interface ClickerTargetWithId extends ClickerTarget {
-  id: string;
-}
+export type ClickerTargetWithId = z.infer<typeof clickerTargetWithIdSchema>;
 
 export class Clicker extends EventTarget {
   clickEmAll = async (targets: ClickerTarget[]) => {

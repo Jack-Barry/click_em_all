@@ -1,9 +1,6 @@
-import {
-  Clicker,
-  ClickerTargetStrategyType,
-  type ClickerTarget,
-} from "../../../src/lib/Clicker/Clicker";
+import { Clicker, type ClickerTarget } from "../../../src/lib/Clicker/Clicker";
 import { ClickerEventType } from "../../../src/lib/Clicker/ClickerEvent";
+import { ClickerTargetStrategyType } from "../../../src/lib/Clicker/schemas";
 
 describe("Clicker", () => {
   let clicker: Clicker;

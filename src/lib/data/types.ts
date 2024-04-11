@@ -1,4 +1,9 @@
-import type { ClickerTarget } from "../Clicker/Clicker";
+import { z } from "zod";
+import { type ClickerTarget } from "../Clicker/Clicker";
+import type {
+  clickerTargetSequenceSchema,
+  clickerTargetsConfigSchema,
+} from "./schemas";
 
 /** Interface to interact with app's data */
 export interface DataService {
@@ -46,22 +51,14 @@ export interface DataService {
   };
 }
 
+/** Group of targets for a given URL in `ClickerTargetsConfig` */
+export type ClickerTargetsConfigTargetSequence = z.infer<
+  typeof clickerTargetSequenceSchema
+>;
+
 /**
  * Configuration object used to keep track of user's click targets per website
  *
  * Each key is a URL where the targets are relevant
  */
-export type ClickerTargetsConfig = Record<
-  string,
-  ClickerTargetsConfigTargetSequence[]
->;
-
-/** Group of targets for a given URL in `ClickerTargetsConfig` */
-export interface ClickerTargetsConfigTargetSequence {
-  /** Unique ID assigned to the target group */
-  id: string;
-  /** Name for the targets group, e.g. "Clip Coupons" */
-  name: string;
-  /** An array of targets that will be sequentially clicked */
-  targets: ClickerTarget[];
-}
+export type ClickerTargetsConfig = z.infer<typeof clickerTargetsConfigSchema>;

@@ -1,10 +1,15 @@
 import Browser from "webextension-polyfill";
-import type {
-  DataService,
-  ClickerTargetsConfig,
-  ClickerTargetsConfigTargetSequence,
+import {
+  type DataService,
+  type ClickerTargetsConfig,
+  type ClickerTargetsConfigTargetSequence,
 } from "../types";
-import type { ClickerTarget } from "../../Clicker/Clicker";
+import { type ClickerTarget } from "../../Clicker/Clicker";
+import {
+  clickerTargetSequenceSchema,
+  clickerTargetsConfigSchema,
+} from "../schemas";
+import { clickerTargetSchema } from "../../Clicker/schemas";
 
 /** `AppData` implemented by interacting with extension storage */
 export class ExtensionStorage implements DataService {
@@ -60,7 +65,8 @@ export class ExtensionStorage implements DataService {
     ) => {
       const data = await this.targets.get();
       const id = crypto.randomUUID();
-      data[url] = [...(data[url] || []), { ...group, id }];
+      const newSequence = clickerTargetSequenceSchema.parse({ ...group, id });
+      data[url] = [...(data[url] || []), newSequence];
       await setTargets(data);
     },
 
@@ -73,10 +79,18 @@ export class ExtensionStorage implements DataService {
     ) => {
       const data = await this.targets.get();
       const sequenceIndex = getSequenceIndex(data, url, sequenceId);
+      const blah = {
+        ...data[url][sequenceIndex],
+        ...sequence,
+      };
+      const editedSequence = clickerTargetSequenceSchema.parse({
+        ...data[url][sequenceIndex],
+        ...sequence,
+      });
 
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
-        { ...data[url][sequenceIndex], ...sequence },
+        editedSequence,
         ...data[url].slice(sequenceIndex + 1),
       ];
       await setTargets(data);
@@ -100,11 +114,12 @@ export class ExtensionStorage implements DataService {
     ) => {
       const data = await this.targets.get();
       const sequenceIndex = getSequenceIndex(data, url, sequenceId);
+      const newTarget = clickerTargetSchema.parse(target);
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         {
           ...data[url][sequenceIndex],
-          targets: [...data[url][sequenceIndex].targets, target],
+          targets: [...data[url][sequenceIndex].targets, newTarget],
         },
         ...data[url].slice(sequenceIndex + 1),
       ];
@@ -124,13 +139,17 @@ export class ExtensionStorage implements DataService {
         throw new Error(`No target found at index: ${index}`);
       }
 
+      const editedTarget = clickerTargetSchema.parse({
+        ...existingTarget,
+        ...target,
+      });
       data[url] = [
         ...data[url].slice(0, sequenceIndex),
         {
           ...data[url][sequenceIndex],
           targets: [
             ...data[url][sequenceIndex].targets.slice(0, index),
-            { ...existingTarget, ...target },
+            editedTarget,
             ...data[url][sequenceIndex].targets.slice(index + 1),
           ],
         },
@@ -163,8 +182,9 @@ export class ExtensionStorage implements DataService {
 }
 
 async function setTargets(data: ClickerTargetsConfig) {
+  const validated = clickerTargetsConfigSchema.parse(data);
   return await Browser.storage.local.set({
-    [ExtensionStorage.STORAGE_KEYS.TARGETS]: data,
+    [ExtensionStorage.STORAGE_KEYS.TARGETS]: validated,
   });
 }
 
