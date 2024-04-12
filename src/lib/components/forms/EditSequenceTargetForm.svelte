@@ -98,5 +98,7 @@
     />
   </div>
   <button type="button" on:click={onCancel}>Cancel</button>
-  <button type="submit" disabled={$hasErrors || !$hasChanges}>Save</button>
+  <button type="submit" disabled={$hasErrors || !$hasChanges}>
+    Save Target
+  </button>
 </form>

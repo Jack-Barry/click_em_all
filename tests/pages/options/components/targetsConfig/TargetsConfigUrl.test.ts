@@ -16,7 +16,7 @@ describe("TargetsConfigUrl", () => {
     test("renders button to edit the URL", async () => {
       render(TargetsConfigUrl, { url: "testurl" });
       expect(screen.queryByLabelText("URL")).not.toBeInTheDocument();
-      await userEvent.click(screen.getByText("Edit"));
+      await userEvent.click(screen.getByText("Edit URL"));
       const urlInput = screen.getByLabelText("URL");
       expect(urlInput).toBeVisible();
       expect(urlInput).toHaveValue("testurl");
@@ -28,7 +28,7 @@ describe("TargetsConfigUrl", () => {
         mockRemoveUrl
       );
       render(TargetsConfigUrl, { url: "testurl" });
-      await userEvent.click(screen.getByText("Delete"));
+      await userEvent.click(screen.getByText("Remove URL"));
       expect(mockRemoveUrl).toHaveBeenCalledOnce();
       expect(mockRemoveUrl).toHaveBeenCalledWith("testurl");
     });
@@ -78,18 +78,18 @@ describe("TargetsConfigUrl", () => {
           .map((e) => e.message)
           .join(", ");
 
-        expect(screen.getByText("Save")).toBeDisabled();
+        expect(screen.getByText("Save Sequence")).toBeDisabled();
         await userEvent.type(screen.getByLabelText("Name"), "Name");
-        expect(screen.getByText("Save")).toBeEnabled();
+        expect(screen.getByText("Save Sequence")).toBeEnabled();
 
         await userEvent.clear(screen.getByLabelText("Name"));
         expect(
           screen.queryByText(expectedErrorMessage)
         ).not.toBeInTheDocument();
-        expect(screen.getByText("Save")).toBeDisabled();
+        expect(screen.getByText("Save Sequence")).toBeDisabled();
 
         // Error message shows once user has left the field empty
-        await userEvent.click(screen.getByText("Save"));
+        await userEvent.click(screen.getByText("Save Sequence"));
         expect(screen.getByText(expectedErrorMessage)).toBeVisible();
         expect(screen.getByText("Sequence")).toBeVisible();
         expect(screen.getByLabelText("Name")).toBeVisible();
@@ -103,8 +103,8 @@ describe("TargetsConfigUrl", () => {
           screen.getByLabelText("Name"),
           "New Sequence Name"
         );
-        expect(screen.getByText("Save")).toBeEnabled();
-        await userEvent.click(screen.getByText("Save"));
+        expect(screen.getByText("Save Sequence")).toBeEnabled();
+        await userEvent.click(screen.getByText("Save Sequence"));
 
         expect(mockAddSequence).toHaveBeenCalledOnce();
         expect(mockAddSequence).toHaveBeenCalledWith("testurl", {
@@ -124,7 +124,7 @@ describe("TargetsConfigUrl", () => {
 
     test("reverts to editMode:false when cancel button is clicked", async () => {
       render(TargetsConfigUrl, { url: "testurl" });
-      await userEvent.click(screen.getByText("Edit"));
+      await userEvent.click(screen.getByText("Edit URL"));
       expect(screen.getByLabelText("URL")).toBeVisible();
       await userEvent.click(screen.getByText("Cancel"));
       expect(mockMoveUrl).not.toHaveBeenCalled();
@@ -134,10 +134,10 @@ describe("TargetsConfigUrl", () => {
     test("renders error message when saving throws Error", async () => {
       mockMoveUrl.mockRejectedValueOnce(new Error("bad request"));
       render(TargetsConfigUrl, { url: "testurl" });
-      await userEvent.click(screen.getByText("Edit"));
+      await userEvent.click(screen.getByText("Edit URL"));
       expect(screen.queryByText("bad request")).not.toBeInTheDocument();
       await userEvent.type(screen.getByLabelText("URL"), "x"); // make a change
-      await userEvent.click(screen.getByText("Save"));
+      await userEvent.click(screen.getByText("Save URL"));
       expect(screen.getByText("bad request")).toBeVisible();
       // editMode still true
       expect(screen.getByLabelText("URL")).toBeVisible();
@@ -145,10 +145,10 @@ describe("TargetsConfigUrl", () => {
 
     test("moves URL when edited and saved", async () => {
       render(TargetsConfigUrl, { url: "testurl" });
-      await userEvent.click(screen.getByText("Edit"));
+      await userEvent.click(screen.getByText("Edit URL"));
       await userEvent.clear(screen.getByLabelText("URL"));
       await userEvent.type(screen.getByLabelText("URL"), "newurl");
-      await userEvent.click(screen.getByText("Save"));
+      await userEvent.click(screen.getByText("Save URL"));
 
       expect(mockMoveUrl).toHaveBeenCalledOnce();
       expect(mockMoveUrl).toHaveBeenCalledWith("testurl", "newurl");

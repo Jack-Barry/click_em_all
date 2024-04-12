@@ -45,8 +45,8 @@
   {:else}
     <div>
       <span class="monospace">{url}</span>
-      <button on:click={toggleEditMode}>Edit</button>
-      <button on:click={handleDelete}>Delete</button>
+      <button on:click={toggleEditMode}>Edit URL</button>
+      <button on:click={handleDelete}>Remove URL</button>
       {#if $addingSequenceToUrl}
         <EditSequenceForm
           on:cancel={toggleAddingSequenceToUrl}

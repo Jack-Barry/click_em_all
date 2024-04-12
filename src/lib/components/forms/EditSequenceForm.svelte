@@ -19,7 +19,9 @@
     cancel: undefined;
   }>();
 
-  const { applyValidationErrors, store } = formStoreZod({ name: "" });
+  const { applyValidationErrors, store } = formStoreZod({
+    name: sequence.name,
+  });
   const { hasChanges, hasErrors, fields } = store;
 
   function onSubmit() {
@@ -52,5 +54,7 @@
     <FormInput formStore={store} id="sequence_name" key="name" label="Name" />
   </div>
   <button type="button" on:click={onCancel}>Cancel</button>
-  <button type="submit" disabled={$hasErrors || !$hasChanges}>Save</button>
+  <button type="submit" disabled={$hasErrors || !$hasChanges}>
+    Save Sequence
+  </button>
 </form>
