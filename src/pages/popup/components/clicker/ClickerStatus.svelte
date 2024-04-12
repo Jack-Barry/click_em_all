@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
   import { onMessage } from "webext-bridge/popup";
+
   import {
     ClickerEventType,
     type ClickerEvent,
-  } from "../../../../lib/Clicker/ClickerEvent";
+  } from "lib/Clicker/ClickerEvent";
+
   import ClickerStatusItem from "./ClickerStatusItem.svelte";
-  import { createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
 

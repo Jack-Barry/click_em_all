@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { clickerTargetSchema } from "../Clicker/schemas";
+
+import { clickerTargetSchema } from "lib/Clicker/schemas";
 
 /** Schema for a clicker target sequence */
 export const clickerTargetSequenceSchema = z.object({
@@ -18,4 +19,6 @@ export const clickerTargetsConfigSchema = z
   .object({})
   .catchall(z.array(clickerTargetSequenceSchema));
 
-export const clickerTargetUrlSchema = z.string().min(2);
+export const clickerTargetUrlSchema = z
+  .string()
+  .min(1, "URL must be a non-empty string");

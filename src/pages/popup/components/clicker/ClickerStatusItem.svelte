@@ -3,7 +3,7 @@
     type ClickerEvent,
     ClickerEventType,
     type ClickerEventDetail,
-  } from "../../../../lib/Clicker/ClickerEvent";
+  } from "lib/Clicker/ClickerEvent";
 
   export let event: ClickerEvent<ClickerEventType>;
   $: detail = event?.detail as ClickerEventDetail<ClickerEventType>;

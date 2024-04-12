@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { appStorage } from "../../../../lib/data/extensionStorage";
-  import type { ClickerTargetsConfigTargetSequence } from "../../../../lib/data/types";
-  import NewSequenceForm from "../forms/NewSequenceForm.svelte";
-  import TargetsConfigUrlEdit from "./TargetsConfigUrlEdit.svelte";
+  import EditUrlForm from "lib/components/forms/EditUrlForm.svelte";
+  import NewSequenceForm from "lib/components/forms/NewSequenceForm.svelte";
+  import { appStorage } from "lib/data/extensionStorage";
+  import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
 
   export let url: string;
   let editMode = false;
@@ -16,18 +16,18 @@
     addingSequenceToUrl = !addingSequenceToUrl;
   }
 
-  let saveError: string;
+  let saveErrors: string[];
   async function handleSave({ detail }: CustomEvent) {
-    saveError = "";
+    saveErrors = [];
     try {
       await appStorage.targets.moveUrl(detail.oldUrl, detail.newUrl);
       editMode = false;
     } catch (e) {
       const message = (e as Error).message;
       if (message) {
-        saveError = message;
+        saveErrors = [message];
       } else {
-        saveError = "Encountered an error, unable to save";
+        saveErrors = ["Encountered an error, unable to save"];
       }
     }
   }
@@ -54,10 +54,10 @@
 <div>
   {#if editMode}
     <div>
-      <TargetsConfigUrlEdit
+      <EditUrlForm
         {url}
-        errorMessage={saveError}
-        on:saved={handleSave}
+        submissionErrors={saveErrors}
+        on:submit={handleSave}
         on:cancelled={toggleEditMode}
       />
     </div>

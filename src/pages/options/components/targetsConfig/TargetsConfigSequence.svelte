@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { type ClickerTarget } from "../../../../lib/Clicker/Clicker";
-  import { appStorage } from "../../../../lib/data/extensionStorage";
-  import type { ClickerTargetsConfigTargetSequence } from "../../../../lib/data/types";
+  import { type ClickerTarget } from "lib/Clicker/Clicker";
+  import { appStorage } from "lib/data/extensionStorage";
+  import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
+
   import TargetsConfigSequenceTarget from "./TargetsConfigSequenceTarget.svelte";
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
 

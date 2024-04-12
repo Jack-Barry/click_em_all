@@ -1,9 +1,10 @@
 import { render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { expect, test } from "vitest";
-import TargetsConfigUrl from "../../../../../src/pages/options/components/targetsConfig/TargetsConfigUrl.svelte";
+
 import { appStorage } from "../../../../../src/lib/data/extensionStorage";
 import { clickerTargetSequenceSchema } from "../../../../../src/lib/data/schemas";
+import TargetsConfigUrl from "../../../../../src/pages/options/components/targetsConfig/TargetsConfigUrl.svelte";
 
 describe("TargetsConfigUrl", () => {
   describe("when editMode is false", () => {
@@ -135,6 +136,7 @@ describe("TargetsConfigUrl", () => {
       render(TargetsConfigUrl, { url: "testurl" });
       await userEvent.click(screen.getByText("Edit"));
       expect(screen.queryByText("bad request")).not.toBeInTheDocument();
+      await userEvent.type(screen.getByLabelText("URL"), "x"); // make a change
       await userEvent.click(screen.getByText("Save"));
       expect(screen.getByText("bad request")).toBeVisible();
       // editMode still true

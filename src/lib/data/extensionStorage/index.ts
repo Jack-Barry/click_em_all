@@ -1,15 +1,16 @@
 import Browser from "webextension-polyfill";
+
+import { type ClickerTarget } from "lib/Clicker/Clicker";
+import { clickerTargetSchema } from "lib/Clicker/schemas";
+import {
+  clickerTargetSequenceSchema,
+  clickerTargetsConfigSchema,
+} from "lib/data/schemas";
 import {
   type DataService,
   type ClickerTargetsConfig,
   type ClickerTargetsConfigTargetSequence,
-} from "../types";
-import { type ClickerTarget } from "../../Clicker/Clicker";
-import {
-  clickerTargetSequenceSchema,
-  clickerTargetsConfigSchema,
-} from "../schemas";
-import { clickerTargetSchema } from "../../Clicker/schemas";
+} from "lib/data/types";
 
 /** `AppData` implemented by interacting with extension storage */
 export class ExtensionStorage implements DataService {

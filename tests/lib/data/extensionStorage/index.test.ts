@@ -1,10 +1,11 @@
 import browser from "webextension-polyfill";
+
+import { ClickerTargetStrategyType } from "../../../../src/lib/Clicker/schemas";
 import {
   ExtensionStorage,
   appStorage,
 } from "../../../../src/lib/data/extensionStorage";
 import type { ClickerTargetsConfig } from "../../../../src/lib/data/types";
-import { ClickerTargetStrategyType } from "../../../../src/lib/Clicker/schemas";
 
 describe("Data: using Extension Storage: targets", () => {
   let mockData: ClickerTargetsConfig;

@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { type ClickerTarget } from "../Clicker/Clicker";
+
+import { type ClickerTarget } from "lib/Clicker/Clicker";
+
 import type {
   clickerTargetSequenceSchema,
   clickerTargetsConfigSchema,

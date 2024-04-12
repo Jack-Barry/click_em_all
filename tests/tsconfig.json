@@ -1,13 +1,7 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "./../tsconfig.json",
   "compilerOptions": {
-    "strict": true,
     "types": ["vitest/globals"]
   },
-  "include": [
-    "./../src/**/*.ts",
-    "./../src/**/*.js",
-    "./../src/**/*.svelte",
-    "./../tests/**/*.ts"
-  ]
+  "include": ["../src/**/*.ts", "../src/**/*.svelte", "../tests/**/*.ts"]
 }

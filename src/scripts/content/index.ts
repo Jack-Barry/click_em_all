@@ -1,6 +1,7 @@
 import { onMessage, sendMessage } from "webext-bridge/content-script";
-import { ClickerEvent, ClickerEventType } from "../../lib/Clicker/ClickerEvent";
-import { Clicker, type ClickerTarget } from "../../lib/Clicker/Clicker";
+
+import { Clicker, type ClickerTarget } from "lib/Clicker/Clicker";
+import { ClickerEvent, ClickerEventType } from "lib/Clicker/ClickerEvent";
 
 console.log("🏁 Initializing Click 'em All...");
 

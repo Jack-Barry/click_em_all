@@ -1,7 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
+
+  import type { ClickerTarget } from "lib/Clicker/Clicker";
+
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
-  import type { ClickerTarget } from "../../../../lib/Clicker/Clicker";
 
   const dispatch = createEventDispatcher();
 

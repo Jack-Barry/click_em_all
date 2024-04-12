@@ -1,6 +1,5 @@
 <script lang="ts" generics="K extends string">
   import type { FormStore } from "./formStore";
-
   import FormInputErrors from "./FormInputErrors.svelte";
 
   export let formStore: FormStore<K>;
@@ -20,5 +19,6 @@
   value={$fields[key].value}
   on:input={onInput}
   on:blur={onBlur}
+  {...$$restProps}
 />
 <FormInputErrors id={descriptionId} fieldState={$fields[key]} />

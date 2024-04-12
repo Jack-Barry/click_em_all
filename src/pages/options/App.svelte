@@ -1,20 +1,34 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { ClickerTargetsConfig } from "../../lib/data/types";
-  import {
-    ExtensionStorage,
-    appStorage,
-  } from "../../lib/data/extensionStorage";
   import Browser from "webextension-polyfill";
-  import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
-  import TargetsConfigUrlEdit from "./components/targetsConfig/TargetsConfigUrlEdit.svelte";
+
+  import { ExtensionStorage, appStorage } from "lib/data/extensionStorage";
+  import type { ClickerTargetsConfig } from "lib/data/types";
+  import EditUrlForm from "lib/components/forms/EditUrlForm.svelte";
+
   import TargetsConfigSequence from "./components/targetsConfig/TargetsConfigSequence.svelte";
+  import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
 
   let targets: ClickerTargetsConfig = {};
   let addingNewUrl = false;
 
   function toggleAddingNewUrl() {
     addingNewUrl = !addingNewUrl;
+  }
+
+  let addUrlErrors: string[];
+  async function addNewUrl(event: CustomEvent<{ newUrl: string }>) {
+    addUrlErrors = [];
+    try {
+      await appStorage.targets.addUrl(event.detail.newUrl);
+      toggleAddingNewUrl();
+    } catch (e) {
+      if ((e as Error).message) {
+        addUrlErrors = [(e as Error).message];
+      } else {
+        addUrlErrors = ["Encountered error adding new URL"];
+      }
+    }
   }
 
   $: targetsAsArray = Object.entries(targets);
@@ -63,11 +77,9 @@
     </div>
   {/each}
   {#if addingNewUrl}
-    <TargetsConfigUrlEdit
-      on:saved={async ({ detail }) => {
-        await appStorage.targets.addUrl(detail.newUrl);
-        toggleAddingNewUrl();
-      }}
+    <EditUrlForm
+      submissionErrors={addUrlErrors}
+      on:submit={addNewUrl}
       on:cancelled={toggleAddingNewUrl}
     />
   {:else}

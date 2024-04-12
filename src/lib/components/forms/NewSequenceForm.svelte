@@ -1,10 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import type { ClickerTargetsConfigTargetSequence } from "../../../../lib/data/types";
-  import { clickerTargetSequenceSchema } from "../../../../lib/data/schemas";
-  import FormSubmissionErrors from "../../../../lib/components/forms/FormSubmissionErrors.svelte";
-  import FormInput from "../../../../lib/components/forms/FormInput.svelte";
-  import { formStoreZod } from "../../../../lib/components/forms/formStoreZod";
+
+  import { clickerTargetSequenceSchema } from "lib/data/schemas";
+  import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
+  import FormInput from "lib/components/forms/utils/FormInput.svelte";
+  import { formStoreZod } from "lib/components/forms/utils/formStoreZod";
+  import FormSubmissionErrors from "lib/components/forms/utils/FormSubmissionErrors.svelte";
 
   export let submissionErrors: string[] = [];
 

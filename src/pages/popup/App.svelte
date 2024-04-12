@@ -2,14 +2,16 @@
   import { onMount } from "svelte";
   import browser, { type Tabs } from "webextension-polyfill";
   import { sendMessage } from "webext-bridge/popup";
-  import type { ClickerTargetsConfigTargetSequence } from "../../lib/data/types";
-  import { appStorage } from "../../lib/data/extensionStorage";
+
+  import type { ClickerTarget } from "lib/Clicker/Clicker";
   import {
     ClickerEventType,
     type ClickerEvent,
-  } from "../../lib/Clicker/ClickerEvent";
+  } from "lib/Clicker/ClickerEvent";
+  import { appStorage } from "lib/data/extensionStorage";
+  import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
+
   import ClickerStatus from "./components/clicker/ClickerStatus.svelte";
-  import type { ClickerTarget } from "../../lib/Clicker/Clicker";
 
   let activeTab: Tabs.Tab | undefined;
   let matchingSequences: ClickerTargetsConfigTargetSequence[] = [];
