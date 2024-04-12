@@ -2,21 +2,21 @@
   import { type ClickerTarget } from "lib/Clicker/Clicker";
   import { appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
+  import { toggleStore, tryCatchStore } from "lib/common";
 
   import TargetsConfigSequenceTarget from "./TargetsConfigSequenceTarget.svelte";
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
-  import { errorMessage } from "lib/errors";
 
   export let url: string;
   export let sequence: ClickerTargetsConfigTargetSequence;
 
-  let editMode = false;
   let newName = sequence.name;
-  let addingTargetToSequence = false;
 
-  function toggleEditMode() {
-    editMode = !editMode;
-  }
+  const { state: editMode, toggle: toggleEditMode } = toggleStore();
+  const {
+    state: addingTargetToSequence,
+    toggle: toggleAddingTargetToSequence,
+  } = toggleStore();
 
   async function handleSave() {
     await appStorage.targets.editSequence(url, sequence.id, { name: newName });
@@ -27,26 +27,15 @@
     await appStorage.targets.removeSequence(url, sequence.id);
   }
 
-  function toggleAddingTargetToSequence() {
-    addingTargetToSequence = !addingTargetToSequence;
-  }
-
-  let addTargetErrors: string[] = [];
-  async function handleAddTargetToSequence(event: CustomEvent<ClickerTarget>) {
-    addTargetErrors = [];
-    try {
+  const { errors: addTargetErrors, submit: handleAddTargetToSequence } =
+    tryCatchStore(async function (event: CustomEvent<ClickerTarget>) {
       await appStorage.targets.addTargetToSequence(
         url,
         sequence.id,
         event.detail
       );
       toggleAddingTargetToSequence();
-    } catch (e) {
-      addTargetErrors = [
-        errorMessage(e, "Encountered an error adding target to sequence"),
-      ];
-    }
-  }
+    }, "Encountered an error adding target to sequence");
 
   let editingTargetIndex = -1;
   function toggleEditingTargetIndex(targetIndex: number) {
@@ -57,12 +46,10 @@
     }
   }
 
-  let updateTargetErrors: string[] = [];
-  async function updateTarget(
-    event: CustomEvent<{ targetIndex: number; target: ClickerTarget }>
-  ) {
-    updateTargetErrors = [];
-    try {
+  const { errors: updateTargetErrors, submit: updateTarget } = tryCatchStore(
+    async function (
+      event: CustomEvent<{ targetIndex: number; target: ClickerTarget }>
+    ) {
       await appStorage.targets.editTarget(
         url,
         sequence.id,
@@ -70,35 +57,27 @@
         event.detail.target
       );
       toggleEditingTargetIndex(event.detail.targetIndex);
-    } catch (e) {
-      updateTargetErrors = [
-        errorMessage(e, "Encountered an error updating target"),
-      ];
-    }
-  }
+    },
+    "Encountered an error updating target"
+  );
 
-  let removeTargetErrors: string[] = [];
-  async function removeTarget(event: CustomEvent<number>) {
-    removeTargetErrors = [];
-    try {
+  const { errors: removeTargetErrors, submit: removeTarget } = tryCatchStore(
+    async function (event: CustomEvent<number>) {
       await appStorage.targets.removeTargetFromSequence(
         url,
         sequence.id,
         event.detail
       );
-    } catch (e) {
-      removeTargetErrors = [
-        errorMessage(e, "Encountered an error removing target"),
-      ];
-    }
-  }
+    },
+    "Encountered an error removing target"
+  );
 </script>
 
 <div>
-  {#if editMode}
+  {#if $editMode}
     <form on:submit|preventDefault={handleSave}>
       <label for="name">Name</label>
-      <input name="name" bind:value={newName} />
+      <input id="name" name="name" bind:value={newName} />
       <button type="button" on:click={toggleEditMode}>Cancel</button>
       <button type="submit">Save</button>
     </form>
@@ -115,18 +94,18 @@
       targetIndex={index}
       editMode={editingTargetIndex === index}
       on:removeTarget={removeTarget}
-      {removeTargetErrors}
+      removeTargetErrors={$removeTargetErrors}
       on:toggleEditMode={(e) => {
         toggleEditingTargetIndex(e.detail);
       }}
       on:updateTarget={updateTarget}
-      updateErrors={updateTargetErrors}
+      updateErrors={$updateTargetErrors}
     />
   {/each}
-  {#if addingTargetToSequence}
+  {#if $addingTargetToSequence}
     <TargetsConfigTarget
       editMode={true}
-      saveTargetErrors={addTargetErrors}
+      saveTargetErrors={$addTargetErrors}
       on:saveTarget={handleAddTargetToSequence}
       on:toggleEditMode={toggleAddingTargetToSequence}
     />

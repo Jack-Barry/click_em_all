@@ -3,56 +3,41 @@
   import NewSequenceForm from "lib/components/forms/NewSequenceForm.svelte";
   import { appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
-  import { errorMessage } from "lib/errors";
+  import { toggleStore, tryCatchStore } from "lib/common";
 
   export let url: string;
-  let editMode = false;
-  let addingSequenceToUrl = false;
 
-  function toggleEditMode() {
-    editMode = !editMode;
-  }
+  const { state: editMode, toggle: toggleEditMode } = toggleStore();
+  const { state: addingSequenceToUrl, toggle: toggleAddingSequenceToUrl } =
+    toggleStore();
 
-  function toggleAddingSequenceToUrl() {
-    addingSequenceToUrl = !addingSequenceToUrl;
-  }
-
-  let saveErrors: string[];
-  async function handleSave({ detail }: CustomEvent) {
-    saveErrors = [];
-    try {
+  const { errors: saveErrors, submit: handleSave } = tryCatchStore(
+    async function ({ detail }: CustomEvent) {
       await appStorage.targets.moveUrl(detail.oldUrl, detail.newUrl);
-      editMode = false;
-    } catch (e) {
-      saveErrors = [errorMessage(e, "Encountered an error, unable to save")];
-    }
-  }
+      toggleEditMode();
+    },
+    "Encountered an error, unable to save"
+  );
 
   async function handleDelete() {
     await appStorage.targets.removeUrl(url);
   }
 
-  let addSequenceErrors: string[] = [];
-  async function handleAddSequenceToUrl(
-    event: CustomEvent<Omit<ClickerTargetsConfigTargetSequence, "id">>
-  ) {
-    addSequenceErrors = [];
-
-    try {
+  const { errors: addSequenceErrors, submit: handleAddSequenceToUrl } =
+    tryCatchStore(async function (
+      event: CustomEvent<Omit<ClickerTargetsConfigTargetSequence, "id">>
+    ) {
       await appStorage.targets.addSequence(url, event.detail);
       toggleAddingSequenceToUrl();
-    } catch {
-      addSequenceErrors = ["Faild to add new sequence"];
-    }
-  }
+    }, "Encountered an error adding new sequence");
 </script>
 
 <div>
-  {#if editMode}
+  {#if $editMode}
     <div>
       <EditUrlForm
         {url}
-        submissionErrors={saveErrors}
+        submissionErrors={$saveErrors}
         on:submit={handleSave}
         on:cancelled={toggleEditMode}
       />
@@ -62,11 +47,11 @@
       <span class="monospace">{url}</span>
       <button on:click={toggleEditMode}>Edit</button>
       <button on:click={handleDelete}>Delete</button>
-      {#if addingSequenceToUrl}
+      {#if $addingSequenceToUrl}
         <NewSequenceForm
           on:cancel={toggleAddingSequenceToUrl}
           on:submit={handleAddSequenceToUrl}
-          submissionErrors={addSequenceErrors}
+          submissionErrors={$addSequenceErrors}
         />
       {:else}
         <button on:click={toggleAddingSequenceToUrl}>

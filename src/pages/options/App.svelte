@@ -2,31 +2,24 @@
   import { onMount } from "svelte";
   import Browser from "webextension-polyfill";
 
+  import EditUrlForm from "lib/components/forms/EditUrlForm.svelte";
   import { ExtensionStorage, appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfig } from "lib/data/types";
-  import EditUrlForm from "lib/components/forms/EditUrlForm.svelte";
+  import { toggleStore, tryCatchStore } from "lib/common";
 
   import TargetsConfigSequence from "./components/targetsConfig/TargetsConfigSequence.svelte";
   import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
-  import { errorMessage } from "lib/errors";
 
   let targets: ClickerTargetsConfig = {};
-  let addingNewUrl = false;
 
-  function toggleAddingNewUrl() {
-    addingNewUrl = !addingNewUrl;
-  }
-
-  let addUrlErrors: string[];
-  async function addNewUrl(event: CustomEvent<{ newUrl: string }>) {
-    addUrlErrors = [];
-    try {
+  const { state: addingNewUrl, toggle: toggleAddingNewUrl } = toggleStore();
+  const { errors: addUrlErrors, submit: addNewUrl } = tryCatchStore(
+    async function (event: CustomEvent<{ newUrl: string }>) {
       await appStorage.targets.addUrl(event.detail.newUrl);
       toggleAddingNewUrl();
-    } catch (e) {
-      addUrlErrors = [errorMessage(e, "Encountered error adding new URL")];
-    }
-  }
+    },
+    "Encountered error adding new URL"
+  );
 
   $: targetsAsArray = Object.entries(targets);
 
@@ -73,9 +66,9 @@
       {/each}
     </div>
   {/each}
-  {#if addingNewUrl}
+  {#if $addingNewUrl}
     <EditUrlForm
-      submissionErrors={addUrlErrors}
+      submissionErrors={$addUrlErrors}
       on:submit={addNewUrl}
       on:cancelled={toggleAddingNewUrl}
     />

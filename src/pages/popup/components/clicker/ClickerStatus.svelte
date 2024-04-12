@@ -9,7 +9,9 @@
 
   import ClickerStatusItem from "./ClickerStatusItem.svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    statusChange: Record<string, ClickerEvent<ClickerEventType>[]>;
+  }>();
 
   let clickerErrors: ClickerEvent<ClickerEventType.error>[] = [];
   export let statuses: Record<string, ClickerEvent<ClickerEventType>[]> = {};

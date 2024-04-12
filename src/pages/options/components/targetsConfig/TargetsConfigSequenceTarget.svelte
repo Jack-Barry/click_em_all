@@ -5,7 +5,11 @@
 
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<{
+    toggleEditMode: number;
+    removeTarget: number;
+    updateTarget: { targetIndex: number; target: ClickerTarget };
+  }>();
 
   export let target: ClickerTarget;
   export let targetIndex: number;
