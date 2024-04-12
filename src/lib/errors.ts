@@ -3,7 +3,7 @@
  *   otherwise
  */
 export function errorMessage(e: unknown, defaultMessage: string): string {
-  if ((e as Error).message) {
+  if ((e as Error)?.message) {
     return (e as Error).message;
   }
 

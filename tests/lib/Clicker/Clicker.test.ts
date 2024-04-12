@@ -1,5 +1,8 @@
 import { Clicker, type ClickerTarget } from "../../../src/lib/Clicker/Clicker";
-import { ClickerEventType } from "../../../src/lib/Clicker/ClickerEvent";
+import {
+  ClickerEvent,
+  ClickerEventType,
+} from "../../../src/lib/Clicker/ClickerEvent";
 import { ClickerTargetStrategyType } from "../../../src/lib/Clicker/schemas";
 
 describe("Clicker", () => {
@@ -7,6 +10,7 @@ describe("Clicker", () => {
   let whilePresentTarget: ClickerTarget;
   let allFoundTarget: ClickerTarget;
 
+  const handleError = vi.fn();
   const handleBeginClickingEvent = vi.fn();
   const handleFoundElementsEvent = vi.fn();
   const handleMaxClicksReachedEvent = vi.fn();
@@ -15,6 +19,7 @@ describe("Clicker", () => {
 
   beforeEach(() => {
     clicker = new Clicker();
+    clicker.addEventListener(ClickerEventType.error, handleError);
     clicker.addEventListener(
       ClickerEventType.beginClicking,
       handleBeginClickingEvent
@@ -46,6 +51,23 @@ describe("Clicker", () => {
       selector: ".allFoundTarget",
       strategy: ClickerTargetStrategyType.allFound,
     };
+  });
+
+  test("emits error events for callers to listen for", async () => {
+    const error = new Error("bad request");
+    vi.spyOn(document, "querySelector").mockImplementationOnce(() => {
+      throw error;
+    });
+    await expect(clicker.clickEmAll([whilePresentTarget])).rejects.toEqual(
+      error
+    );
+    expect(handleError).toHaveBeenCalledOnce();
+    expect(handleError).toHaveBeenCalledWith(expect.any(ClickerEvent));
+    expect(handleError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: error,
+      })
+    );
   });
 
   describe("when handling target with strategy: whilePresent", () => {
