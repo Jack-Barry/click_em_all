@@ -3,6 +3,7 @@
   import NewSequenceForm from "lib/components/forms/NewSequenceForm.svelte";
   import { appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
+  import { errorMessage } from "lib/errors";
 
   export let url: string;
   let editMode = false;
@@ -23,12 +24,7 @@
       await appStorage.targets.moveUrl(detail.oldUrl, detail.newUrl);
       editMode = false;
     } catch (e) {
-      const message = (e as Error).message;
-      if (message) {
-        saveErrors = [message];
-      } else {
-        saveErrors = ["Encountered an error, unable to save"];
-      }
+      saveErrors = [errorMessage(e, "Encountered an error, unable to save")];
     }
   }
 

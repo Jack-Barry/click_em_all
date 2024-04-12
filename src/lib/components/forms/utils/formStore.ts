@@ -2,7 +2,7 @@ import { derived, writable } from "svelte/store";
 
 /** Event from an `HTMLInputElement` */
 type InputEvent = Event & {
-  currentTarget: EventTarget & HTMLInputElement;
+  currentTarget: EventTarget & (HTMLInputElement | HTMLSelectElement);
 };
 
 /** State tracked for each field in in `FormStoreState` */
@@ -65,6 +65,15 @@ export function formStore<K extends string = string>(
     return $fields;
   });
 
+  const values = derived(fields, ($fields) => {
+    return Object.entries<FormStoreField>($fields).reduce<
+      Record<string, string>
+    >((result, [key, value]) => {
+      result[key] = value.value;
+      return result;
+    }, {});
+  });
+
   const hasChanges = derived(fields, ($fields: FormStoreState<K>) =>
     Object.values<FormStoreField>($fields).some((v) => v.hasChanged)
   );
@@ -121,15 +130,6 @@ export function formStore<K extends string = string>(
     });
   }
 
-  function setAllFieldsTouched() {
-    baseState.update((prev) => {
-      Object.keys(prev).forEach((key) => {
-        prev[key as K].touched = true;
-      });
-      return prev;
-    });
-  }
-
   function onInput(e: InputEvent) {
     baseState.update((prev) => {
       const key = e.currentTarget.name as K;
@@ -150,6 +150,8 @@ export function formStore<K extends string = string>(
   return {
     /** State of form's constituent fields */
     fields,
+    /** Key-value object of form field values */
+    values,
     /** At least one value in the form has changed */
     hasChanges,
     /** At least one field in the form has errors */

@@ -10,6 +10,8 @@
   export let target: ClickerTarget;
   export let targetIndex: number;
   export let editMode = false;
+  export let updateErrors: string[] = [];
+  export let removeTargetErrors: string[] = [];
 
   function toggleEditMode() {
     dispatch("toggleEditMode", targetIndex);
@@ -28,10 +30,20 @@
   <TargetsConfigTarget
     existingTarget={target}
     {editMode}
+    saveTargetErrors={updateErrors}
     on:saveTarget={updateTarget}
     on:toggleEditMode={toggleEditMode}
   />
   {#if !editMode}
-    <button on:click={removeTarget}> Remove Target </button>
+    {#if removeTargetErrors.length}
+      <div role="alert">
+        <ul>
+          {#each removeTargetErrors as error}
+            <li>{error}</li>
+          {/each}
+        </ul>
+      </div>
+    {/if}
+    <button on:click={removeTarget}>Remove Target</button>
   {/if}
 </div>

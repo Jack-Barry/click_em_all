@@ -12,7 +12,7 @@ export const clickerTargetSchema = z.object({
   /** Name for the selector, e.g. "Load More" */
   name: z
     .string({ required_error: "Name is required" })
-    .min(2, "Name must be at least 2 characters long"),
+    .min(1, "Name must be a non-empty string"),
   /** Selector to use when searchng for matching element(s) on page */
   selector: z
     .string({ required_error: "An element selector must be specified" })

@@ -8,6 +8,7 @@
 
   import TargetsConfigSequence from "./components/targetsConfig/TargetsConfigSequence.svelte";
   import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
+  import { errorMessage } from "lib/errors";
 
   let targets: ClickerTargetsConfig = {};
   let addingNewUrl = false;
@@ -23,11 +24,7 @@
       await appStorage.targets.addUrl(event.detail.newUrl);
       toggleAddingNewUrl();
     } catch (e) {
-      if ((e as Error).message) {
-        addUrlErrors = [(e as Error).message];
-      } else {
-        addUrlErrors = ["Encountered error adding new URL"];
-      }
+      addUrlErrors = [errorMessage(e, "Encountered error adding new URL")];
     }
   }
 
