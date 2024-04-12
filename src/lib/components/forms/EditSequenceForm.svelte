@@ -7,7 +7,12 @@
   import { formStoreZod } from "lib/components/forms/utils/formStoreZod";
   import FormSubmissionErrors from "lib/components/forms/utils/FormSubmissionErrors.svelte";
 
+  export let sequence: Omit<ClickerTargetsConfigTargetSequence, "id"> = {
+    name: "",
+    targets: [],
+  };
   export let submissionErrors: string[] = [];
+  let editedSequence = { ...sequence };
 
   const dispatch = createEventDispatcher<{
     submit: Omit<ClickerTargetsConfigTargetSequence, "id">;
@@ -16,13 +21,9 @@
 
   const { applyValidationErrors, store } = formStoreZod({ name: "" });
   const { hasChanges, hasErrors, fields } = store;
-  let newSequence: Omit<ClickerTargetsConfigTargetSequence, "id"> = {
-    name: "",
-    targets: [],
-  };
 
   function onSubmit() {
-    dispatch("submit", newSequence);
+    dispatch("submit", editedSequence);
   }
 
   function onCancel() {
@@ -31,11 +32,11 @@
 
   $: {
     store.clearErrors();
-    newSequence = { ...newSequence, name: $fields.name.value };
+    editedSequence = { ...editedSequence, name: $fields.name.value };
 
     const validationResult = clickerTargetSequenceSchema
       .omit({ id: true, targets: true })
-      .safeParse(newSequence);
+      .safeParse(editedSequence);
 
     if (!validationResult.success) {
       const formatted = validationResult.error.format();
@@ -45,15 +46,10 @@
 </script>
 
 <form on:submit|preventDefault={onSubmit}>
-  <header>New Sequence</header>
+  <header>Sequence</header>
   <FormSubmissionErrors {submissionErrors} />
   <div>
-    <FormInput
-      formStore={store}
-      id="new_sequence_name"
-      key="name"
-      label="Name"
-    />
+    <FormInput formStore={store} id="sequence_name" key="name" label="Name" />
   </div>
   <button type="button" on:click={onCancel}>Cancel</button>
   <button type="submit" disabled={$hasErrors || !$hasChanges}>Save</button>

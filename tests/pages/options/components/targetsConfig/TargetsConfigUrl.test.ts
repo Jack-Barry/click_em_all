@@ -36,13 +36,13 @@ describe("TargetsConfigUrl", () => {
     describe("when addingSequenceToUrl is false", () => {
       test("renders button to add new sequence to URL", async () => {
         render(TargetsConfigUrl, { url: "testurl" });
-        expect(screen.queryByText("New Sequence")).not.toBeInTheDocument();
+        expect(screen.queryByText("Sequence")).not.toBeInTheDocument();
         expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
         expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
 
         await userEvent.click(getAddSequenceButton());
 
-        expect(screen.getByText("New Sequence")).toBeVisible();
+        expect(screen.getByText("Sequence")).toBeVisible();
         expect(screen.getByLabelText("Name")).toBeVisible();
         expect(screen.getByText("Cancel")).toBeVisible();
       });
@@ -60,7 +60,7 @@ describe("TargetsConfigUrl", () => {
         await userEvent.click(screen.getByText("Cancel"));
 
         expect(mockAddSequence).not.toHaveBeenCalled();
-        expect(screen.queryByText("New Sequence")).not.toBeInTheDocument();
+        expect(screen.queryByText("Sequence")).not.toBeInTheDocument();
         expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
         expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
       });
@@ -91,7 +91,7 @@ describe("TargetsConfigUrl", () => {
         // Error message shows once user has left the field empty
         await userEvent.click(screen.getByText("Save"));
         expect(screen.getByText(expectedErrorMessage)).toBeVisible();
-        expect(screen.getByText("New Sequence")).toBeVisible();
+        expect(screen.getByText("Sequence")).toBeVisible();
         expect(screen.getByLabelText("Name")).toBeVisible();
         expect(screen.getByText("Cancel")).toBeVisible();
       });
@@ -111,7 +111,7 @@ describe("TargetsConfigUrl", () => {
           name: "New Sequence Name",
           targets: [],
         });
-        expect(screen.queryByText("New Sequence")).not.toBeInTheDocument();
+        expect(screen.queryByText("Sequence")).not.toBeInTheDocument();
         expect(screen.queryByLabelText("Name")).not.toBeInTheDocument();
         expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
       });

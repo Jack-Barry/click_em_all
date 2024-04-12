@@ -6,6 +6,7 @@
 
   import TargetsConfigSequenceTarget from "./TargetsConfigSequenceTarget.svelte";
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
+  import EditSequenceForm from "lib/components/forms/EditSequenceForm.svelte";
 
   export let url: string;
   export let sequence: ClickerTargetsConfigTargetSequence;
@@ -75,12 +76,11 @@
 
 <div>
   {#if $editMode}
-    <form on:submit|preventDefault={handleSave}>
-      <label for="name">Name</label>
-      <input id="name" name="name" bind:value={newName} />
-      <button type="button" on:click={toggleEditMode}>Cancel</button>
-      <button type="submit">Save</button>
-    </form>
+    <EditSequenceForm
+      {sequence}
+      on:cancel={toggleEditMode}
+      on:submit={handleSave}
+    />
   {:else}
     <div>
       <span>{sequence.name}</span>

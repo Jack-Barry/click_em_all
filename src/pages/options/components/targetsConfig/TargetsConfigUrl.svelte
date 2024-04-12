@@ -1,6 +1,6 @@
 <script lang="ts">
   import EditUrlForm from "lib/components/forms/EditUrlForm.svelte";
-  import NewSequenceForm from "lib/components/forms/NewSequenceForm.svelte";
+  import EditSequenceForm from "lib/components/forms/EditSequenceForm.svelte";
   import { appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
   import { toggleStore, tryCatchStore } from "lib/common";
@@ -48,7 +48,7 @@
       <button on:click={toggleEditMode}>Edit</button>
       <button on:click={handleDelete}>Delete</button>
       {#if $addingSequenceToUrl}
-        <NewSequenceForm
+        <EditSequenceForm
           on:cancel={toggleAddingSequenceToUrl}
           on:submit={handleAddSequenceToUrl}
           submissionErrors={$addSequenceErrors}
