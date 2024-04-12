@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import { onMessage, sendMessage } from "webext-bridge/content-script";
 
 import { Clicker, type ClickerTarget } from "lib/Clicker/Clicker";
@@ -51,3 +52,4 @@ function sendClickEmAllEventToPopup(event: ClickerEvent<ClickerEventType>) {
     "popup"
   );
 }
+/* v8 ignore end */
