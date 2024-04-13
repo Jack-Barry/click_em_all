@@ -9,12 +9,14 @@
 
   import ClickerStatusItem from "./ClickerStatusItem.svelte";
 
+  export let statuses: Record<string, ClickerEvent<ClickerEventType>[]> = {};
+
   const dispatch = createEventDispatcher<{
     statusChange: Record<string, ClickerEvent<ClickerEventType>[]>;
   }>();
 
   let clickerErrors: ClickerEvent<ClickerEventType.error>[] = [];
-  export let statuses: Record<string, ClickerEvent<ClickerEventType>[]> = {};
+
   onMessage("clickEmAllEvent", (msg) => {
     const data = msg.data as unknown as ClickerEvent<ClickerEventType>;
     if (data.type === ClickerEventType.error) {
