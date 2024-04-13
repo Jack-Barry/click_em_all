@@ -17,22 +17,15 @@ export type FormStoreField = {
   hasChanged: boolean;
   /** User has visited field */
   touched: boolean;
-  /** `hasChanged` should take case-sensitivity into account */
-  caseSensitive: boolean;
   /** Error messages related to the field */
   errors: string[];
 };
 
 /** Object used to initialize a field's state */
-export type FormStoreInitField = Partial<
-  Pick<FormStoreField, "defaultValue" | "caseSensitive">
->;
+export type FormStoreInitField = Partial<Pick<FormStoreField, "defaultValue">>;
 
 /** Object used to initialize `FormStoreState` */
-export type FormStoreInit<K extends string = string> = Record<
-  K,
-  FormStoreInitField | string
->;
+export type FormStoreInit<K extends string = string> = Record<K, string>;
 
 /** State of form fields */
 export type FormStoreState<K extends string = string> = Record<
@@ -103,33 +96,6 @@ export function formStore<K extends string = string>(
     });
   }
 
-  function resetFieldValue(
-    key: K,
-    options: {
-      resetDirty?: boolean;
-      resetTouched?: boolean;
-      resetErrors?: boolean;
-    } = {}
-  ) {
-    baseState.update((prev) => {
-      prev[key].value = prev[key].defaultValue;
-
-      if (options.resetDirty) {
-        prev[key].dirty = false;
-      }
-
-      if (options.resetTouched) {
-        prev[key].touched = false;
-      }
-
-      if (options.resetErrors) {
-        prev[key].errors = [];
-      }
-
-      return prev;
-    });
-  }
-
   function onInput(e: InputEvent) {
     baseState.update((prev) => {
       const key = e.currentTarget.name as K;
@@ -172,8 +138,6 @@ export function formStore<K extends string = string>(
     setErrors,
     /** Function to set `errors` on specified field */
     setErrorsOnField,
-    /** Function to reset specified field */
-    resetFieldValue,
     /** Function to clear *all* errors in the form */
     clearErrors,
   };
@@ -184,13 +148,9 @@ function formStoreStateFromInit<K extends string = string>(
 ): FormStoreState<K> {
   const state: Partial<FormStoreState<K>> = {};
 
-  Object.entries<FormStoreInitField | string>(init).forEach(([key, value]) => {
+  Object.entries<string>(init).forEach(([key, value]) => {
     let fieldState: FormStoreField;
-    if (typeof value === "string") {
-      fieldState = initializeField({ defaultValue: value });
-    } else {
-      fieldState = initializeField(value);
-    }
+    fieldState = initializeField({ defaultValue: value });
     state[key as K] = fieldState;
   });
 
@@ -198,12 +158,11 @@ function formStoreStateFromInit<K extends string = string>(
 }
 
 function initializeField(value: FormStoreInitField): FormStoreField {
-  const { defaultValue = "", caseSensitive = false } = value;
+  const { defaultValue = "" } = value;
 
   return {
     defaultValue,
     value: defaultValue,
-    caseSensitive,
     dirty: false,
     touched: false,
     hasChanged: false,
@@ -212,7 +171,5 @@ function initializeField(value: FormStoreInitField): FormStoreField {
 }
 
 function fieldHasChanged(field: FormStoreField) {
-  return field.caseSensitive
-    ? field.value !== field.defaultValue
-    : field.value.toLowerCase() !== field.defaultValue.toLowerCase();
+  return field.value.toLowerCase() !== field.defaultValue.toLowerCase();
 }
