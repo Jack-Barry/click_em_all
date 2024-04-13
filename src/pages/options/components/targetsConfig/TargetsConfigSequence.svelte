@@ -4,7 +4,6 @@
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
   import { toggleStore, tryCatchStore } from "lib/common";
 
-  import TargetsConfigSequenceTarget from "./TargetsConfigSequenceTarget.svelte";
   import TargetsConfigTarget from "./TargetsConfigTarget.svelte";
   import EditSequenceForm from "lib/components/forms/EditSequenceForm.svelte";
 
@@ -32,11 +31,13 @@
   }
 
   const { errors: addTargetErrors, submit: handleAddTargetToSequence } =
-    tryCatchStore(async function (event: CustomEvent<ClickerTarget>) {
+    tryCatchStore(async function (
+      event: CustomEvent<{ target: ClickerTarget }>
+    ) {
       await appStorage.targets.addTargetToSequence(
         url,
         sequence.id,
-        event.detail
+        event.detail.target
       );
       toggleAddingTargetToSequence();
     }, "Encountered an error adding target to sequence");
@@ -93,9 +94,9 @@
     </div>
   {/if}
   {#each sequence.targets as target, index}
-    <TargetsConfigSequenceTarget
-      {target}
+    <TargetsConfigTarget
       targetIndex={index}
+      existingTarget={target}
       editMode={editingTargetIndex === index}
       on:removeTarget={removeTarget}
       removeTargetErrors={$removeTargetErrors}
@@ -103,7 +104,7 @@
         toggleEditingTargetIndex(e.detail);
       }}
       on:updateTarget={updateTarget}
-      updateErrors={$updateTargetErrors}
+      saveTargetErrors={$updateTargetErrors}
     />
   {/each}
   {#if $addingTargetToSequence}
@@ -111,7 +112,7 @@
       editMode={true}
       saveTargetErrors={$addTargetErrors}
       on:saveTarget={handleAddTargetToSequence}
-      on:toggleEditMode={toggleAddingTargetToSequence}
+      on:toggleCreatingTarget={toggleAddingTargetToSequence}
     />
   {:else}
     <button on:click={toggleAddingTargetToSequence}>
