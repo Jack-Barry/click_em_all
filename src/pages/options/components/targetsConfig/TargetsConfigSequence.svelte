@@ -11,18 +11,21 @@
   export let url: string;
   export let sequence: ClickerTargetsConfigTargetSequence;
 
-  let newName = sequence.name;
-
   const { state: editMode, toggle: toggleEditMode } = toggleStore();
   const {
     state: addingTargetToSequence,
     toggle: toggleAddingTargetToSequence,
   } = toggleStore();
 
-  async function handleSave() {
-    await appStorage.targets.editSequence(url, sequence.id, { name: newName });
-    toggleEditMode();
-  }
+  const { errors: editSequenceErrors, submit: handleSave } = tryCatchStore(
+    async function (event: CustomEvent<{ name: string }>) {
+      await appStorage.targets.editSequence(url, sequence.id, {
+        name: event.detail.name,
+      });
+      toggleEditMode();
+    },
+    "Encountered an error editing sequence"
+  );
 
   async function removeSequence() {
     await appStorage.targets.removeSequence(url, sequence.id);
@@ -78,6 +81,7 @@
   {#if $editMode}
     <EditSequenceForm
       {sequence}
+      submissionErrors={$editSequenceErrors}
       on:cancel={toggleEditMode}
       on:submit={handleSave}
     />

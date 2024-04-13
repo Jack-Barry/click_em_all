@@ -22,7 +22,7 @@
   const { applyValidationErrors, store } = formStoreZod({
     name: sequence.name,
   });
-  const { hasChanges, hasErrors, fields } = store;
+  const { hasChanges, hasErrors, values } = store;
 
   function onSubmit() {
     dispatch("submit", editedSequence);
@@ -34,7 +34,7 @@
 
   $: {
     store.clearErrors();
-    editedSequence = { ...editedSequence, name: $fields.name.value };
+    editedSequence = { ...editedSequence, name: $values.name };
 
     const validationResult = clickerTargetSequenceSchema
       .omit({ id: true, targets: true })
