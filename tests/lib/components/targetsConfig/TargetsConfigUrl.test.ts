@@ -2,16 +2,15 @@ import { render, screen } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
 import { expect, test } from "vitest";
 
-import { appStorage } from "../../../../../src/lib/data/extensionStorage";
-import { clickerTargetSequenceSchema } from "../../../../../src/lib/data/schemas";
-import TargetsConfigUrl from "../../../../../src/pages/options/components/targetsConfig/TargetsConfigUrl.svelte";
+import TargetsConfigUrl from "../../../../src/lib/components/targetsConfig/TargetsConfigUrl.svelte";
+import { appStorage } from "../../../../src/lib/data/extensionStorage";
+import { clickerTargetSequenceSchema } from "../../../../src/lib/data/schemas";
 import {
   cancelButton,
   nameInput,
   sequenceSaveButton,
-} from "../../../../utils/commonSelectors";
-import type { ZodType, ZodTypeAny } from "zod";
-import { getExpectedErrorMessages } from "../../../../utils/errorMessages";
+} from "../../../utils/commonSelectors";
+import { getExpectedErrorMessages } from "../../../utils/errorMessages";
 
 describe("Options: TargetsConfigUrl", () => {
   let props: { url: string };

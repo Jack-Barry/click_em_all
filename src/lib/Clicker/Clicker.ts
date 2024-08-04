@@ -61,7 +61,7 @@ export class Clicker extends EventTarget {
 
     if (count === maxClicks) {
       this.dispatchEvent(
-        new ClickerEvent(ClickerEventType.maxClicksReached, { target })
+        new ClickerEvent(ClickerEventType.maxClicksReached, { target }),
       );
     }
 
@@ -69,27 +69,27 @@ export class Clicker extends EventTarget {
       new ClickerEvent(ClickerEventType.clickedElements, {
         target,
         count,
-      })
+      }),
     );
   };
 
   #clickAllMatchingElements = (target: ClickerTargetWithId) => {
     const { selector, maxClicks = Infinity } = target;
     const elements = document.querySelectorAll(
-      selector
+      selector,
     ) as NodeListOf<HTMLElement>;
     this.dispatchEvent(
       new ClickerEvent(ClickerEventType.foundElements, {
         target,
         count: elements.length,
-      })
+      }),
     );
 
     let clickedCount = 0;
     for (const element of elements) {
       if (clickedCount >= maxClicks) {
         this.dispatchEvent(
-          new ClickerEvent(ClickerEventType.maxClicksReached, { target })
+          new ClickerEvent(ClickerEventType.maxClicksReached, { target }),
         );
         break;
       }
@@ -102,7 +102,7 @@ export class Clicker extends EventTarget {
       new ClickerEvent(ClickerEventType.clickedElements, {
         target,
         count: clickedCount,
-      })
+      }),
     );
   };
 }

@@ -7,8 +7,8 @@
   import type { ClickerTargetsConfig } from "lib/data/types";
   import { toggleStore, tryCatchStore } from "lib/common";
 
-  import TargetsConfigSequence from "./components/targetsConfig/TargetsConfigSequence.svelte";
-  import TargetsConfigUrl from "./components/targetsConfig/TargetsConfigUrl.svelte";
+  import TargetsConfigSequence from "../../lib/components/targetsConfig/TargetsConfigSequence.svelte";
+  import TargetsConfigUrl from "../../lib/components/targetsConfig/TargetsConfigUrl.svelte";
 
   let targets: ClickerTargetsConfig = {};
 

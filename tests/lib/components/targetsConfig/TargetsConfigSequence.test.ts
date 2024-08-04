@@ -1,19 +1,19 @@
 import { render, screen } from "@testing-library/svelte";
 import userEvent from "@testing-library/user-event";
 
-import { appStorage } from "../../../../../src/lib/data/extensionStorage";
-import type { ClickerTargetsConfigTargetSequence } from "../../../../../src/lib/data/types";
-import TargetsConfigSequence from "../../../../../src/pages/options/components/targetsConfig/TargetsConfigSequence.svelte";
+import TargetsConfigSequence from "../../../../src/lib/components/targetsConfig/TargetsConfigSequence.svelte";
+import { appStorage } from "../../../../src/lib/data/extensionStorage";
+import type { ClickerTargetsConfigTargetSequence } from "../../../../src/lib/data/types";
 import {
   cancelButton,
   nameInput,
   sequenceSaveButton,
-} from "../../../../utils/commonSelectors";
-import { getExpectedErrorMessages } from "../../../../utils/errorMessages";
+} from "../../../utils/commonSelectors";
+import { getExpectedErrorMessages } from "../../../utils/errorMessages";
 import {
   ClickerTargetStrategyType,
   clickerTargetSchema,
-} from "../../../../../src/lib/Clicker/schemas";
+} from "../../../../src/lib/Clicker/schemas";
 
 describe("Options: TargetsConfigSequence", () => {
   let props: { url: string; sequence: ClickerTargetsConfigTargetSequence };

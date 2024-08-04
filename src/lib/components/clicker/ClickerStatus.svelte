@@ -1,6 +1,5 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import { onMessage } from "webext-bridge/popup";
 
   import {
     ClickerEventType,
@@ -9,6 +8,7 @@
 
   import ClickerStatusItem from "./ClickerStatusItem.svelte";
 
+  export let onMessage: typeof import("webext-bridge/popup").onMessage;
   export let statuses: Record<string, ClickerEvent<ClickerEventType>[]> = {};
 
   const dispatch = createEventDispatcher<{

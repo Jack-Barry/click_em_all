@@ -11,6 +11,7 @@
   },
   "permissions": ["activeTab", "scripting", "storage"],
   "background": {
+    "service_worker": "src/scripts/background/index.ts",
     "scripts": ["src/scripts/background/index.ts"]
   },
   "content_scripts": [

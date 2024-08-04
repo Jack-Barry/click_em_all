@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import browser, { type Tabs } from "webextension-polyfill";
-  import { sendMessage } from "webext-bridge/popup";
+  import { onMessage, sendMessage } from "webext-bridge/popup";
 
   import type { ClickerTarget } from "lib/Clicker/Clicker";
   import {
@@ -11,7 +11,7 @@
   import { appStorage } from "lib/data/extensionStorage";
   import type { ClickerTargetsConfigTargetSequence } from "lib/data/types";
 
-  import ClickerStatus from "./components/clicker/ClickerStatus.svelte";
+  import ClickerStatus from "../../lib/components/clicker/ClickerStatus.svelte";
 
   let activeTab: Tabs.Tab | undefined;
   let matchingSequences: ClickerTargetsConfigTargetSequence[] = [];
@@ -58,6 +58,7 @@
     </div>
   {/each}
   <ClickerStatus
+    {onMessage}
     statuses={clickerStatuses}
     on:statusChange={(update) => (clickerStatuses = update.detail)}
   />

@@ -9,6 +9,15 @@ import "@testing-library/jest-dom/vitest";
 global.chrome = {
   runtime: {
     id: "testid",
+    connect: vi.fn().mockReturnValue({
+      onMessage: {
+        addListener: vi.fn(),
+      },
+      onDisconnect: {
+        addListener: vi.fn(),
+      },
+      postMessage: vi.fn(),
+    }),
   },
 };
 

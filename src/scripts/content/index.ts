@@ -23,13 +23,13 @@ clicker.addEventListener(ClickerEventType.foundElements, (e) => {
 
 clicker.addEventListener(ClickerEventType.maxClicksReached, (e) => {
   sendClickEmAllEventToPopup(
-    e as ClickerEvent<ClickerEventType.maxClicksReached>
+    e as ClickerEvent<ClickerEventType.maxClicksReached>,
   );
 });
 
 clicker.addEventListener(ClickerEventType.clickedElements, (e) => {
   sendClickEmAllEventToPopup(
-    e as ClickerEvent<ClickerEventType.clickedElements>
+    e as ClickerEvent<ClickerEventType.clickedElements>,
   );
 });
 
@@ -49,7 +49,7 @@ function sendClickEmAllEventToPopup(event: ClickerEvent<ClickerEventType>) {
   sendMessage(
     "clickEmAllEvent",
     { type: event.type, detail: event.detail },
-    "popup"
+    "popup",
   );
 }
 /* v8 ignore end */

@@ -1,22 +1,22 @@
 import { render, screen } from "@testing-library/svelte";
+import * as webextBridge from "webext-bridge/popup";
 
-import type { ClickerTargetWithId } from "../../../../../src/lib/Clicker/Clicker";
+import type { ClickerTargetWithId } from "../../../../src/lib/Clicker/Clicker";
 import {
   ClickerEvent,
   ClickerEventType,
-} from "../../../../../src/lib/Clicker/ClickerEvent";
-import { ClickerTargetStrategyType } from "../../../../../src/lib/Clicker/schemas";
-import ClickerStatus from "../../../../../src/pages/popup/components/clicker/ClickerStatus.svelte";
-
-vi.mock("webext-bridge/popup", async () => {
-  return { onMessage: vi.fn() };
-});
+} from "../../../../src/lib/Clicker/ClickerEvent";
+import { ClickerTargetStrategyType } from "../../../../src/lib/Clicker/schemas";
+import ClickerStatus from "../../../../src/lib/components/clicker/ClickerStatus.svelte";
 
 describe("Popup: ClickerStatus", () => {
-  let props: { statuses: Record<string, ClickerEvent<ClickerEventType>[]> };
+  let props: {
+    onMessage: typeof webextBridge.onMessage;
+    statuses: Record<string, ClickerEvent<ClickerEventType>[]>;
+  };
 
   beforeEach(() => {
-    props = { statuses: {} };
+    props = { onMessage: webextBridge.onMessage, statuses: {} };
   });
 
   test("presents latest status for each target in the currently active sequence", () => {
@@ -70,5 +70,15 @@ describe("Popup: ClickerStatus", () => {
       )
     );
     expect(screen.getByText(`Found 3 instances of "${targetC.name}"`));
+  });
+
+  describe("clickEmAllEvent handler", () => {
+    describe("when message with error is received", () => {
+      test.skip("errors are rendered", () => {});
+    });
+
+    describe("when message with target ID is received", () => {
+      test.skip("renders statuses as they are received", () => {});
+    });
   });
 });
