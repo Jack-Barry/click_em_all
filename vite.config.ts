@@ -1,12 +1,12 @@
-import { defineConfig, loadEnv } from 'vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
-import webExtension from '@samrum/vite-plugin-web-extension';
-import path from 'path';
-import { getManifest } from './src/manifest';
+import { defineConfig, loadEnv } from 'vite'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
+import webExtension from '@samrum/vite-plugin-web-extension'
+import path from 'path'
+import { getManifest } from './src/manifest'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(mode, process.cwd(), '')
 
   return {
     plugins: [
@@ -30,5 +30,5 @@ export default defineConfig(({ mode }) => {
       globals: true,
       setupFiles: ['tests/setup.ts']
     }
-  };
-});
+  }
+})

@@ -9,5 +9,5 @@ vi.mock('webextension-polyfill', async () => {
         openOptionsPage: vi.fn()
       }
     }
-  };
-});
+  }
+})
