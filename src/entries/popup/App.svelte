@@ -1,7 +1,7 @@
 <script lang="ts">
-  import PageContent from '~/lib/PageContent.svelte';
+  import OpenOptionsPageButton from '~/lib/components/OpenOptionsPageButton.svelte';
 </script>
 
 <main>
-  <PageContent>Popup</PageContent>
+  <OpenOptionsPageButton />
 </main>
