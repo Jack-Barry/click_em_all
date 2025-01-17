@@ -20,6 +20,7 @@
   "devDependencies": {
     "@samrum/vite-plugin-web-extension": "^5.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/svelte": "^5.2.6",
     "@testing-library/user-event": "^14.6.0",
     "@tsconfig/svelte": "^5.0.2",
@@ -37,6 +38,7 @@
     "web-ext": "^7.8.0"
   },
   "dependencies": {
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "zod": "^3.24.1"
   }
 }
