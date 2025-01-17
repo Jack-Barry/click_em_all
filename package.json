@@ -1,7 +1,7 @@
 {
   "name": "@jack-barry/click-em-all",
   "version": "1.0.0",
-  "displayName": "Click 'em All Web Extension",
+  "displayName": "Click 'em All",
   "author": "Jack Barry",
   "description": "A web extension for clicking all the things",
   "type": "module",
