@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/svelte'
+import { render, screen, waitFor } from '@testing-library/svelte'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
 import ConfigForm from '../../../src/lib/components/ConfigForm.svelte'
 import { validateConfig, type Config } from '../../../src/lib/models/config'
+import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
+import { prettyJson } from '../../../src/lib/utils/json'
 import { _jsonAsTextInput_ } from '../../utils'
 import { _getConfig_, _getUrl_ } from '../models/utils'
 
@@ -9,11 +11,22 @@ describe('ConfigForm', () => {
   let user: UserEvent
   let url: string
   let config: Config
+  const getConfigSpy = vi.spyOn(ConfigStorage.prototype, 'getConfig')
+  const setConfigSpy = vi.spyOn(ConfigStorage.prototype, 'setConfig')
 
   beforeEach(() => {
     user = userEvent.setup()
     url = _getUrl_()
     config = _getConfig_(url)
+  })
+
+  it('loads existing config if found in local storage', async () => {
+    getConfigSpy.mockResolvedValue(config)
+
+    render(ConfigForm)
+    const textarea = getConfigTextInput()
+    expect(getConfigSpy).toHaveBeenCalledOnce()
+    await waitFor(() => expect(textarea).toHaveValue(prettyJson(config)))
   })
 
   it('allows submission when input is valid JSON', async () => {
@@ -74,6 +87,29 @@ describe('ConfigForm', () => {
       const errorOnPage = screen.queryByText(`${JSON.stringify(err.path)}:${err.message}`)
       expect(errorOnPage).toBeInTheDocument()
     })
+  })
+
+  it('stores submitted config in local storage', async () => {
+    render(ConfigForm)
+    const textarea = getConfigTextInput()
+    await userEvent.clear(textarea)
+    const configAsInput = _jsonAsTextInput_(config)
+    await userEvent.type(textarea, configAsInput)
+    await userEvent.click(getSubmitButton())
+    expect(setConfigSpy).toHaveBeenCalledExactlyOnceWith(config)
+  })
+
+  it('pretty formats JSON in input upon submit', async () => {
+    render(ConfigForm)
+    const textarea = getConfigTextInput()
+    await userEvent.clear(textarea)
+    const configAsInput = _jsonAsTextInput_(config)
+    await userEvent.type(textarea, configAsInput)
+    expect(textarea).toHaveValue(JSON.stringify(config))
+
+    await userEvent.click(getSubmitButton())
+    expect(textarea).not.toHaveValue(JSON.stringify(config))
+    expect(textarea).toHaveValue(JSON.stringify(config, null, 2))
   })
 })
 

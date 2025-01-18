@@ -16,6 +16,8 @@ export default defineConfig(({ mode }) => {
       })
     ],
     resolve: {
+      // fix svelte lifecycle methods: https://github.com/testing-library/svelte-testing-library/issues/222#issuecomment-1909993331
+      conditions: mode === 'test' ? ['browser'] : [],
       alias: {
         '~': path.resolve(__dirname, './src')
       }

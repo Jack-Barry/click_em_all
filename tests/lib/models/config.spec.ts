@@ -257,6 +257,19 @@ describe('validateConfig', () => {
     const result = validateConfig(testConfig)
     expect(result.success).toBe(true)
   })
+
+  describe('when options.throwOnError is true', () => {
+    it('does not throw when validation passes', () => {
+      const result = validateConfig(testConfig, { throwOnError: true })
+      expect(result.success).toBe(true)
+    })
+
+    it('throws when validation yields errors', () => {
+      // @ts-expect-error
+      delete testConfig[validUrl][0].targets
+      expect(() => validateConfig(testConfig, { throwOnError: true })).toThrow()
+    })
+  })
 })
 
 function assertAttributesOnError(

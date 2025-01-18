@@ -7,6 +7,13 @@ import '@testing-library/jest-dom/vitest'
 vi.mock('webextension-polyfill', async () => {
   return {
     default: {
+      storage: {
+        local: {
+          get: vi.fn(),
+          set: vi.fn(),
+          onChanged: { addListener: vi.fn(), removeListener: vi.fn() }
+        }
+      },
       runtime: {
         openOptionsPage: vi.fn()
       }

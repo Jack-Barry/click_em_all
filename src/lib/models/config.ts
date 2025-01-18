@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+export interface SchemaValidationOptions {
+  /** Throw if validation yields any errors */
+  throwOnError?: boolean
+}
+
 export interface SchemaValidationError {
   path: (string | number)[]
   message?: string
@@ -81,6 +86,15 @@ export type ClickSequence = z.infer<typeof clickSequenceSchema>
  */
 export type Config = z.infer<typeof configSchema>
 
-export function validateConfig(data: unknown): SchemaValidationResult {
-  return configSchema.safeParse(data)
+export function validateConfig(
+  data: unknown,
+  options: SchemaValidationOptions = {}
+): SchemaValidationResult {
+  const validationResults = configSchema.safeParse(data)
+
+  if (options.throwOnError && validationResults.error) {
+    throw validationResults.error
+  }
+
+  return validationResults
 }
