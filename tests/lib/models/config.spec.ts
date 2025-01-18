@@ -93,6 +93,31 @@ describe('validateConfig', () => {
     })
   })
 
+  it('has error when name is duplicate', () => {
+    testConfig[validUrl][1] = { ...testConfig[validUrl][0] }
+    const result = validateConfig(testConfig)
+    expect(result.success).toBe(false)
+
+    assertAttributesOnError(
+      result,
+      {
+        path: [validUrl, 1, 'name'],
+        message: 'name must be unique',
+        length: 2
+      },
+      0
+    )
+    assertAttributesOnError(
+      result,
+      {
+        path: [validUrl, 0, 'name'],
+        message: 'name must be unique',
+        length: 2
+      },
+      1
+    )
+  })
+
   it('has error when targets is missing from click sequence', () => {
     // @ts-expect-error
     delete testConfig[validUrl][0].targets

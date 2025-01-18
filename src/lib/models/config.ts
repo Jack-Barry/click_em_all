@@ -38,10 +38,32 @@ const clickSequenceSchema = z.object({
   targets: z.array(clickTargetSchema)
 })
 
-const configSchema = z.record(
-  z.string().url({ message: 'top level key must be valid URL' }),
-  z.array(clickSequenceSchema)
-)
+const configSchema = z
+  .record(
+    z.string().url({ message: 'top level key must be valid URL' }),
+    z.array(clickSequenceSchema)
+  )
+  .superRefine((config, ctx) => {
+    Object.entries(config).forEach(([url, sequences]) => {
+      const uniqueValues = new Map<string, number>()
+
+      sequences.forEach((sequence, sequenceIndex) => {
+        const firstAppearanceIndex = uniqueValues.get(sequence.name)
+        if (firstAppearanceIndex !== undefined) {
+          const indices = [sequenceIndex, firstAppearanceIndex]
+
+          indices.forEach((index) => {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'name must be unique',
+              path: [url, ...ctx.path, index, 'name']
+            })
+          })
+        }
+        uniqueValues.set(sequence.name, sequenceIndex)
+      })
+    })
+  })
 
 /** Target to click */
 export type ClickTarget = z.infer<typeof clickTargetSchema>
