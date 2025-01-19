@@ -1,5 +1,5 @@
 import browser, { type Tabs } from 'webextension-polyfill'
-import { getActiveTab } from '../../../../src/lib/utils/browser/tabs'
+import { getActiveTab } from '../../../../src/lib/utils/popup/tabs'
 
 describe('utils: tabs', () => {
   describe('getActiveTab', () => {

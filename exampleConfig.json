@@ -1,0 +1,26 @@
+{
+  "https://github.com": [
+    {
+      "name": "Sequence A",
+      "targets": [
+        {
+          "name": "Copy Raw",
+          "selector": "div.prc-ButtonGroup-ButtonGroup-vcMeG:nth-child(1) > div:nth-child(2) > button:nth-child(1) > svg:nth-child(1)",
+          "strategy": "allFound",
+          "maxClicks": 1
+        }
+      ]
+    },
+    {
+      "name": "Sequence B",
+      "targets": [
+        {
+          "name": "Open Symbols",
+          "selector": ".octicon-code-square",
+          "strategy": "allFound",
+          "maxClicks": 1
+        }
+      ]
+    }
+  ]
+}

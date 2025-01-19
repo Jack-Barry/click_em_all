@@ -22,7 +22,7 @@ export type ClickerEventDetail<Type extends ClickerEventType> = Type extends
   | ClickerEventType.endClicking
   ? undefined
   : Type extends ClickerEventType.maxClicksReached
-    ? { target: ClickTarget }
+    ? { clickTarget: ClickTarget }
     : Type extends ClickerEventType.foundElements | ClickerEventType.clickedElements
-      ? { target: ClickTarget; count: number }
+      ? { clickTarget: ClickTarget; count: number }
       : any
