@@ -18,10 +18,15 @@ describe('ConfigStorage', () => {
 
   describe('addChangeListener', () => {
     const addListenerSpy = vi.spyOn(browser.storage.local.onChanged, 'addListener')
+    let listenerId: string
+
+    beforeEach(() => {
+      listenerId = randomUUID()
+    })
 
     it('adds a listener that invokes the provided callback when stored config changes', () => {
       const onChange = vi.fn()
-      configStorage.addChangeListener('example', onChange)
+      configStorage.addChangeListener(listenerId, onChange)
 
       expect(onChange).not.toHaveBeenCalled()
       const listener = addListenerSpy.mock.calls[0][0]
@@ -38,7 +43,6 @@ describe('ConfigStorage', () => {
     })
 
     it('only adds a listener once when called with the same ID', () => {
-      const listenerId = randomUUID()
       const onChange = vi.fn()
       configStorage.addChangeListener(listenerId, onChange)
       expect(addListenerSpy).toHaveBeenCalledOnce()
@@ -53,15 +57,19 @@ describe('ConfigStorage', () => {
 
   describe('removeChangeListener', () => {
     const removeListenerSpy = vi.spyOn(browser.storage.local.onChanged, 'removeListener')
+    let listenerId: string
+
+    beforeEach(() => {
+      listenerId = randomUUID()
+    })
 
     it('does nothing when a listener was never added', () => {
-      configStorage.removeChangeListener('example')
+      configStorage.removeChangeListener(listenerId)
 
       expect(removeListenerSpy).not.toHaveBeenCalled()
     })
 
     it('removes a listener when it has been added before', () => {
-      const listenerId = 'example'
       configStorage.addChangeListener(listenerId, vi.fn())
 
       expect(removeListenerSpy).not.toHaveBeenCalled()

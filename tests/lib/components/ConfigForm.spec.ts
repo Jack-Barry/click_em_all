@@ -26,12 +26,14 @@ describe('ConfigForm', () => {
     render(ConfigForm)
     const textarea = getConfigTextInput()
     expect(getConfigSpy).toHaveBeenCalledOnce()
-    await waitFor(() => expect(textarea).toHaveValue(prettyJson(config)))
+    await waitForConfigInputValue(config)
   })
 
   it('allows submission when input is valid JSON', async () => {
     const user = userEvent.setup()
     render(ConfigForm)
+    await waitForConfigInputValue({})
+
     const textarea = getConfigTextInput()
     await user.clear(textarea)
     await user.type(textarea, '{{}')
@@ -41,6 +43,8 @@ describe('ConfigForm', () => {
 
   it('allows submission when input is valid config', async () => {
     render(ConfigForm)
+    await waitForConfigInputValue({})
+
     const textarea = getConfigTextInput()
     await userEvent.clear(textarea)
     const configAsInput = _jsonAsTextInput_(config)
@@ -51,6 +55,8 @@ describe('ConfigForm', () => {
 
   it('prevents submission when input is invalid JSON', async () => {
     render(ConfigForm)
+    await waitForConfigInputValue({})
+
     const textarea = getConfigTextInput()
     await userEvent.clear(textarea)
     await userEvent.type(textarea, '{{')
@@ -62,6 +68,7 @@ describe('ConfigForm', () => {
     delete config[url][0].targets
 
     render(ConfigForm)
+    await waitForConfigInputValue({})
     const textarea = getConfigTextInput()
     await userEvent.clear(textarea)
 
@@ -77,6 +84,7 @@ describe('ConfigForm', () => {
     const validationResult = validateConfig(config)
 
     render(ConfigForm)
+    await waitForConfigInputValue({})
     const textarea = getConfigTextInput()
     await userEvent.clear(textarea)
 
@@ -92,6 +100,7 @@ describe('ConfigForm', () => {
   it('stores submitted config in local storage', async () => {
     render(ConfigForm)
     const textarea = getConfigTextInput()
+    await waitForConfigInputValue({})
     await userEvent.clear(textarea)
     const configAsInput = _jsonAsTextInput_(config)
     await userEvent.type(textarea, configAsInput)
@@ -101,6 +110,7 @@ describe('ConfigForm', () => {
 
   it('pretty formats JSON in input upon submit', async () => {
     render(ConfigForm)
+    await waitForConfigInputValue({})
     const textarea = getConfigTextInput()
     await userEvent.clear(textarea)
     const configAsInput = _jsonAsTextInput_(config)
@@ -119,4 +129,8 @@ function getConfigTextInput() {
 
 function getSubmitButton() {
   return screen.getByText('Save Config')
+}
+
+async function waitForConfigInputValue(config: Config) {
+  await waitFor(() => expect(getConfigTextInput()).toHaveValue(prettyJson(config)))
 }

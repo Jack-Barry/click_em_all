@@ -23,7 +23,7 @@ export enum ClickerTargetStrategyType {
   whilePresent = 'whilePresent'
 }
 
-export const clickTargetSchema = z.object({
+const clickTargetSchema = z.object({
   /** Human readable name for the selector */
   name: z.string().min(1),
   /** Selector to use when searching for matching element(s) on page */
