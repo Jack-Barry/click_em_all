@@ -3,7 +3,7 @@ import browser from 'webextension-polyfill'
 import * as configModule from '../../../src/lib/models/config'
 import { type Config } from '../../../src/lib/models/config'
 import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
-import { _getConfig_, _getUrl_ } from '../models/utils'
+import { _getConfig_, _getUrl_ } from '../models/testUtils'
 
 describe('ConfigStorage', () => {
   let configStorage: ConfigStorage

@@ -5,7 +5,7 @@ import { validateConfig, type Config } from '../../../src/lib/models/config'
 import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
 import { prettyJson } from '../../../src/lib/utils/json'
 import { _jsonAsTextInput_ } from '../../utils'
-import { _getConfig_, _getUrl_ } from '../models/utils'
+import { _getConfig_, _getUrl_ } from '../models/testUtils'
 
 describe('ConfigForm', () => {
   let user: UserEvent

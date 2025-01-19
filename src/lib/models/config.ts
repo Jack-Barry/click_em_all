@@ -98,3 +98,17 @@ export function validateConfig(
 
   return validationResults
 }
+
+export function getSequencesForUrl(config: Config, url: string) {
+  const sequencesForUrl: ClickSequence[] = []
+
+  Object.entries(config).forEach(([key, sequences]) => {
+    if (url.startsWith(key)) {
+      sequences.forEach((sequence) => {
+        sequencesForUrl.push(sequence)
+      })
+    }
+  })
+
+  return sequencesForUrl
+}

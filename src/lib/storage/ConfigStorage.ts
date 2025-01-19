@@ -48,6 +48,7 @@ export class ConfigStorage {
     }
 
     browser.storage.local.onChanged.removeListener(listener)
+    delete ConfigStorage.changeListeners[id]
   }
 
   async getConfig() {
