@@ -1,8 +1,25 @@
-import renderContent from '../renderContent'
-import App from './App.svelte'
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
+import { Logging } from '~/lib/utils/logging'
+import { Clicker, ClickerEvent, ClickerEventType } from './Clicker'
+import type { ClickSequence } from '~/lib/models/config'
+import { IpcMessageIds } from '~/lib/constants'
 
-renderContent(import.meta.PLUGIN_WEB_EXT_CHUNK_CSS_PATHS, (appRoot) => {
-  new App({
-    target: appRoot
-  })
+Logging.info('🏁 Initializing...')
+const clicker = Clicker.getInstance()
+
+Clicker.addListener(ClickerEventType.beganClicking, handleEvent)
+Clicker.addListener(ClickerEventType.finishedClicking, handleEvent)
+
+Logging.debug(`Clicker currently registered listeners: ${Clicker.listListeners().join(', ')}`)
+
+Logging.debug(`Adding message listener for ${IpcMessageIds.executeClickSequence}`)
+onMessage(IpcMessageIds.executeClickSequence, (msg) => {
+  clicker.executeClickSequence(msg.data as ClickSequence)
 })
+
+async function handleEvent<EventType extends ClickerEventType>(event: ClickerEvent<EventType>) {
+  Logging.debug(`Handling eventType: ${event.type}, detail:`, event.detail)
+  await sendMessage(event.type, event.detail as Parameters<typeof sendMessage>[1], 'popup')
+}
+
+Logging.info('Initialization complete 🤘')

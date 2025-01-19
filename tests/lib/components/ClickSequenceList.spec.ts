@@ -6,7 +6,7 @@ import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
 import * as browserTabUtils from '../../../src/lib/utils/browser/tabs'
 import { _getConfig_, _getSequence_, _getUrl_ } from '../models/testUtils'
 
-describe('ClickSequenceList', () => {
+describe('components: ClickSequenceList', () => {
   let url: string
   let config: Config
   let activeTab: Tabs.Tab

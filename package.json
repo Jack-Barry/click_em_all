@@ -38,6 +38,8 @@
     "web-ext": "^7.8.0"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
+    "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.10.0",
     "zod": "^3.24.1"
   }

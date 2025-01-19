@@ -1,5 +1,7 @@
+import 'webext-bridge/background'
 import browser from 'webextension-polyfill'
+import { Logging } from '~/lib/utils/logging'
 
 browser.runtime.onInstalled.addListener(() => {
-  console.log('Extension installed')
+  Logging.info('Extension installed')
 })
