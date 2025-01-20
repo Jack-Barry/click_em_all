@@ -72,7 +72,7 @@ export type SomeSequenceRunnerEventDetail = Partial<
 
 export const SEQUENCE_RUNNER_EMITTED_EVENT_TYPE = 'clickEmAllClicker'
 
-/** Event emitted by `Clicker` */
+/** Event emitted by `SequenceRunner` */
 export class SequenceRunnerEvent<
   Type extends SequenceRunnerEventType = SequenceRunnerEventType
 > extends CustomEvent<SequenceRunnerEventDetail<Type>> {
@@ -119,18 +119,15 @@ export class SequenceRunner {
       return
     }
 
-    SequenceRunner.eventTarget.removeEventListener(id, listener as EventListener)
+    SequenceRunner.eventTarget.removeEventListener(
+      SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
+      listener as EventListener
+    )
     delete SequenceRunner.listeners[id]
   }
 
   static listListeners() {
     return Object.keys(SequenceRunner.listeners)
-  }
-
-  private static sendMessage<Type extends SequenceRunnerEventType>(
-    message: SequenceRunnerEvent<Type>
-  ) {
-    SequenceRunner.eventTarget.dispatchEvent(message)
   }
 
   static async executeSequence(sequence: ActionSequence) {
@@ -273,6 +270,12 @@ export class SequenceRunner {
         })
       )
     }
+  }
+
+  private static sendMessage<Type extends SequenceRunnerEventType>(
+    message: SequenceRunnerEvent<Type>
+  ) {
+    SequenceRunner.eventTarget.dispatchEvent(message)
   }
 
   private static assertElementIsClickable(
