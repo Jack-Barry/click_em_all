@@ -1,4 +1,4 @@
-import { SequenceRunner } from 'src/entries/contentScript/primary/SequenceRunner'
+import { SequenceRunner } from '../../../../src/entries/contentScript/primary/SequenceRunner'
 
 describe('contentScript: SequenceRunner', () => {
   afterEach(() => {

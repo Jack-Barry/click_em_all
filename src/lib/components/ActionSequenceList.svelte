@@ -11,7 +11,7 @@
     type SequenceRunnerEventDetail
   } from '~/entries/contentScript/primary/SequenceRunner'
   import type { ActionSequenceStatusLists } from '~/entries/popup/types'
-  import { Logging } from '../utils/logging'
+  import { Logging } from '../utils/Logging'
   import ActionSequenceStatusList from './ActionSequenceStatusList.svelte'
 
   const configStorage = ConfigStorage.getInstance()

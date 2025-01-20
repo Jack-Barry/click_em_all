@@ -3,7 +3,7 @@ import {
   type ActionSequence,
   type SequenceActionTarget
 } from '~/lib/models/config'
-import { Logging } from '~/lib/utils/logging'
+import { Logging } from '~/lib/utils/Logging'
 import { pause } from '~/lib/utils/pause'
 
 export enum SequenceRunnerEventType {

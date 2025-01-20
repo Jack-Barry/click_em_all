@@ -1,5 +1,5 @@
 import { onMessage, sendMessage } from 'webext-bridge/content-script'
-import { Logging } from '~/lib/utils/logging'
+import { Logging } from '~/lib/utils/Logging'
 import { SequenceRunner } from './SequenceRunner'
 import type { ActionSequence } from '~/lib/models/config'
 import { IpcMessageIds } from '~/lib/constants'
