@@ -50,7 +50,11 @@
     ]
   }
 
+  onMessage(ClickerEventType.error, appendToStatusList)
   onMessage(ClickerEventType.beganClicking, appendToStatusList)
+  onMessage(ClickerEventType.foundElements, appendToStatusList)
+  onMessage(ClickerEventType.reachedMaxClicks, appendToStatusList)
+  onMessage(ClickerEventType.clickedElements, appendToStatusList)
   onMessage(ClickerEventType.finishedClicking, appendToStatusList)
 </script>
 

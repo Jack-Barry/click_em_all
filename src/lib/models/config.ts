@@ -30,9 +30,17 @@ const clickTargetSchema = z.object({
   selector: z.string().min(1),
   /** Strategy to use when clicking matching element(s) */
   strategy: z.nativeEnum(ClickerTargetStrategyType),
-  /** Optional amount of time to wait between each click (in milliseconds) */
+  /**
+   * Optional amount of time to wait between each click (in milliseconds)
+   *
+   * @default 0
+   */
   timeBetweenMs: z.number().optional(),
-  /** Optional max number of clicks to invoke before moving onto the next target */
+  /**
+   * Optional max number of clicks to invoke before moving onto the next target
+   *
+   * @default 1000
+   */
   maxClicks: z.number().optional()
 })
 

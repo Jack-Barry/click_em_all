@@ -7,4 +7,8 @@ export class Logging {
   static debug(...args: Parameters<typeof console.debug>) {
     console.debug(this.messagePrefix, 'DEBUG:', ...args)
   }
+
+  static error(...args: Parameters<typeof console.error>) {
+    console.error(this.messagePrefix, 'ERROR:', ...args)
+  }
 }

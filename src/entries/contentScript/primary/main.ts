@@ -7,7 +7,11 @@ import { IpcMessageIds } from '~/lib/constants'
 Logging.info('🏁 Initializing...')
 const clicker = Clicker.getInstance()
 
+Clicker.addListener(ClickerEventType.error, handleEvent)
 Clicker.addListener(ClickerEventType.beganClicking, handleEvent)
+Clicker.addListener(ClickerEventType.foundElements, handleEvent)
+Clicker.addListener(ClickerEventType.reachedMaxClicks, handleEvent)
+Clicker.addListener(ClickerEventType.clickedElements, handleEvent)
 Clicker.addListener(ClickerEventType.finishedClicking, handleEvent)
 
 Logging.debug(`Clicker currently registered listeners: ${Clicker.listListeners().join(', ')}`)

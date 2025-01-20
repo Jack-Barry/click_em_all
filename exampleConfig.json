@@ -1,0 +1,20 @@
+{
+  "https://www.albertsons.com/foru/coupons-deals.html": [
+    {
+      "name": "Clip All Coupons",
+      "targets": [
+        {
+          "name": "Load more",
+          "selector": ".load-more",
+          "strategy": "whilePresent"
+        },
+        {
+          "name": "Clip coupon",
+          "selector": "[id^=\"couponAddBtn\"]",
+          "strategy": "allFound",
+          "timeBetweenMs": 500
+        }
+      ]
+    }
+  ]
+}
