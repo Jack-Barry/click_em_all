@@ -59,7 +59,7 @@ export type SequenceRunnerEventDetail<
           : {})
 
 /**
- * Convenience type to make it easier to grab preoperties when it's known that
+ * Convenience type to make it easier to grab properties when it's known that
  * a value is _some_ kind of `SequenceRunnerEventDetail`
  */
 export type SomeSequenceRunnerEventDetail = Partial<
@@ -86,23 +86,16 @@ type SequenceRunnerEventListener<Type extends SequenceRunnerEventType = Sequence
 ) => void | Promise<void>
 
 export class SequenceRunner {
-  private static instance: SequenceRunner
   private static eventTarget = new window.EventTarget()
   private static listeners: Record<string, SequenceRunnerEventListener> = {}
 
   private constructor() {}
 
-  static getInstance() {
-    if (!SequenceRunner.instance) {
-      SequenceRunner.instance = new SequenceRunner()
-    }
-
-    return SequenceRunner.instance
-  }
-
-  protected destroy() {
-    // @ts-expect-error
-    SequenceRunner.instance = null
+  /** **For unit test purposes _ONLY_** */
+  protected static reset() {
+    Object.keys(SequenceRunner.listeners).forEach((listenerId) => {
+      SequenceRunner.removeListener(listenerId)
+    })
   }
 
   static addListener<EventType extends SequenceRunnerEventType>(
@@ -127,6 +120,7 @@ export class SequenceRunner {
     }
 
     SequenceRunner.eventTarget.removeEventListener(id, listener as EventListener)
+    delete SequenceRunner.listeners[id]
   }
 
   static listListeners() {
@@ -180,8 +174,8 @@ export class SequenceRunner {
       ...target
     }
 
-    // treat 0 maxClicks as "unlimited"
-    if (targetOptions.maxClicks === 0) {
+    // treat negative number of maxClicks as "unlimited"
+    if (targetOptions.maxClicks < 0) {
       targetOptions.maxClicks = Infinity
     }
 
