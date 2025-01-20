@@ -1,9 +1,9 @@
 <script lang="ts">
-  import ClickSequenceList from '~/lib/components/ClickSequenceList.svelte'
+  import ActionSequenceList from '~/lib/components/ActionSequenceList.svelte'
   import OpenOptionsPageButton from '~/lib/components/OpenOptionsPageButton.svelte'
 </script>
 
 <main>
-  <ClickSequenceList />
+  <ActionSequenceList />
   <OpenOptionsPageButton />
 </main>

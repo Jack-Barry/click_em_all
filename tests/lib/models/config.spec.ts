@@ -1,8 +1,7 @@
 import {
-  ClickerTargetStrategyType,
+  ActionTargetStrategyType,
   getSequencesForUrl,
   validateConfig,
-  type ClickSequence,
   type Config,
   type SchemaValidationError,
   type SchemaValidationResult
@@ -230,7 +229,7 @@ describe('models: config', () => {
     })
 
     it('allows all supported strategy values', () => {
-      for (const strategy of Object.values(ClickerTargetStrategyType)) {
+      for (const strategy of Object.values(ActionTargetStrategyType)) {
         testConfig[validUrl][0].targets[0].strategy = strategy
         const result = validateConfig(testConfig)
         expect(result.success, `allows strategy: ${strategy}`).toBe(true)

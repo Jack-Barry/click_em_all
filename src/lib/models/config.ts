@@ -16,20 +16,20 @@ export interface SchemaValidationResult {
 }
 
 /** Strategy that can be used for a given `ClickerTarget` */
-export enum ClickerTargetStrategyType {
+export enum ActionTargetStrategyType {
   /** Click all targets immediately */
-  allFound = 'allFound',
+  clickAllFound = 'clickAllFound',
   /** Continue clicking first matching element while it is present on the page */
-  whilePresent = 'whilePresent'
+  clickWhilePresent = 'clickWhilePresent'
 }
 
-const clickTargetSchema = z.object({
+const actionTargetSchema = z.object({
   /** Human readable name for the selector */
   name: z.string().min(1),
   /** Selector to use when searching for matching element(s) on page */
   selector: z.string().min(1),
-  /** Strategy to use when clicking matching element(s) */
-  strategy: z.nativeEnum(ClickerTargetStrategyType),
+  /** Strategy to use when interacting with mattching element(s) */
+  strategy: z.nativeEnum(ActionTargetStrategyType),
   /**
    * Optional amount of time to wait between each click (in milliseconds)
    *
@@ -44,17 +44,17 @@ const clickTargetSchema = z.object({
   maxClicks: z.number().optional()
 })
 
-const clickSequenceSchema = z.object({
+const actionSequenceSchema = z.object({
   /** Human readable name for the click sequence */
   name: z.string().min(1),
-  /** Ordered list of targets to click for the click sequence */
-  targets: z.array(clickTargetSchema)
+  /** Ordered list of targets to interact with for the sequence */
+  targets: z.array(actionTargetSchema)
 })
 
 const configSchema = z
   .record(
     z.string().url({ message: 'top level key must be valid URL' }),
-    z.array(clickSequenceSchema)
+    z.array(actionSequenceSchema)
   )
   .superRefine((config, ctx) => {
     Object.entries(config).forEach(([url, sequences]) => {
@@ -79,18 +79,19 @@ const configSchema = z
   })
 
 /** Target to click */
-export type ClickTarget = z.infer<typeof clickTargetSchema>
+export type SequenceActionTarget = z.infer<typeof actionTargetSchema>
 
 /** Sequence of targets to click */
-export type ClickSequence = z.infer<typeof clickSequenceSchema>
+export type ActionSequence = z.infer<typeof actionSequenceSchema>
 
 /**
  * Configuration for the click 'em all application
  *
  * Each key in the config object is a URL representing a website where the user would
- * like to store clicking sequences to execute.
+ * like to store action sequences to execute.
  *
- * Each clicking sequence consists of a series of targets to click
+ * Each action sequence consists of a series of targets to interact with, and how
+ * to interact with them
  */
 export type Config = z.infer<typeof configSchema>
 
@@ -108,7 +109,7 @@ export function validateConfig(
 }
 
 export function getSequencesForUrl(config: Config, url: string) {
-  const sequencesForUrl: ClickSequence[] = []
+  const sequencesForUrl: ActionSequence[] = []
 
   Object.entries(config).forEach(([key, sequences]) => {
     if (url.startsWith(key)) {

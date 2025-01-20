@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/svelte'
 import type { Tabs } from 'webextension-polyfill'
-import ClickSequenceList from '../../../src/lib/components/ClickSequenceList.svelte'
+import ActionSequenceList from '../../../src/lib/components/ActionSequenceList.svelte'
 import type { Config } from '../../../src/lib/models/config'
 import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
 import * as browserTabUtils from '../../../src/lib/utils/browser/tabs'
 import { _getConfig_, _getSequence_, _getUrl_ } from '../models/testUtils'
 
-describe('components: ClickSequenceList', () => {
+describe('components: ActionSequenceList', () => {
   let url: string
   let config: Config
   let activeTab: Tabs.Tab
@@ -30,7 +30,7 @@ describe('components: ClickSequenceList', () => {
 
   it('renders nothing if active tab has no URL', async () => {
     delete activeTab.url
-    render(ClickSequenceList)
+    render(ActionSequenceList)
 
     for (const sequence of config[url]) {
       await waitFor(() => {
@@ -43,7 +43,7 @@ describe('components: ClickSequenceList', () => {
   it('renders nothing if no sequences are applicable to the active tab', async () => {
     const differentUrl = 'https://some.url.with.no.sequences'
     activeTab.url = differentUrl
-    render(ClickSequenceList)
+    render(ActionSequenceList)
 
     for (const sequence of config[url]) {
       await waitFor(() => {
@@ -54,7 +54,7 @@ describe('components: ClickSequenceList', () => {
   })
 
   it('renders button for each sequence applicable to the active tab', async () => {
-    render(ClickSequenceList)
+    render(ActionSequenceList)
 
     for (const sequence of config[url]) {
       await waitFor(() => {

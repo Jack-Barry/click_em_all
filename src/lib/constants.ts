@@ -1,3 +1,3 @@
 export enum IpcMessageIds {
-  executeClickSequence = 'executeClickSequence'
+  executeSequence = 'executeSequence'
 }

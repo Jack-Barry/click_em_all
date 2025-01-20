@@ -1,1 +1,1 @@
-describe.skip('contentScript: Clicker', () => {})
+describe.skip('contentScript: SequenceRunner', () => {})

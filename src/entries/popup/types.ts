@@ -1,13 +1,15 @@
-import type { ClickerEventDetail, ClickerEventType } from '../contentScript/primary/Clicker'
+import type {
+  SequenceRunnerEventDetail,
+  SequenceRunnerEventType
+} from '../contentScript/primary/SequenceRunner'
 
-export interface ClickSequenceStatusListItem<
-  EventType extends ClickerEventType = ClickerEventType
+export interface ActionSequenceStatusListItem<
+  EventType extends SequenceRunnerEventType = SequenceRunnerEventType
 > {
   timestamp: number
-  messageType: EventType
-  data: ClickerEventDetail<EventType>
+  detail: SequenceRunnerEventDetail<EventType>
 }
 
-export type ClickSequenceStatusList = ClickSequenceStatusListItem[]
+export type ActionSequenceStatusList = ActionSequenceStatusListItem[]
 
-export type ClickSequenceStatusLists = Record<string, ClickSequenceStatusList>
+export type ActionSequenceStatusLists = Record<string, ActionSequenceStatusList>

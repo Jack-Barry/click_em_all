@@ -24,7 +24,6 @@ describe('ConfigForm', () => {
     getConfigSpy.mockResolvedValue(config)
 
     render(ConfigForm)
-    const textarea = getConfigTextInput()
     expect(getConfigSpy).toHaveBeenCalledOnce()
     await waitForConfigInputValue(config)
   })
