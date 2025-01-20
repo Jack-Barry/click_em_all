@@ -26,7 +26,16 @@ export default defineConfig(({ mode }) => {
     test: {
       clearMocks: true,
       coverage: {
-        exclude: ['svelte.config.js', 'tests/*']
+        exclude: [
+          '**/*.d.ts',
+          'dist/*',
+          'tests/*',
+          'src/manifest.ts',
+          'src/entries/**/App.svelte',
+          'src/entries/**/{main,script,serviceWorker}.ts',
+          'svelte.config.js',
+          'vite.config.ts'
+        ]
       },
       environment: 'happy-dom',
       globals: true,
