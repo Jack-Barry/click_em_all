@@ -89,6 +89,7 @@ export class SequenceRunner {
   private static eventTarget = new window.EventTarget()
   private static listeners: Record<string, SequenceRunnerEventListener> = {}
 
+  /* v8 ignore next */
   private constructor() {}
 
   /** **For unit test purposes _ONLY_** */
@@ -280,12 +281,8 @@ export class SequenceRunner {
 
   private static assertElementIsClickable(
     selector: string,
-    element: Element | null
+    element: Element
   ): asserts element is HTMLElement {
-    if (!element) {
-      throw new Error(`unable to find element using selector: ${selector}`)
-    }
-
     if ((element as HTMLElement).click === undefined) {
       throw new Error(`element for selector ${selector} is not clickable: ${element.getHTML()}`)
     }

@@ -1,10 +1,18 @@
-import { randomUUID } from 'node:crypto'
+import { randomInt, randomUUID } from 'node:crypto'
 import {
   SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
   SequenceRunner,
   SequenceRunnerEvent,
   SequenceRunnerEventType
 } from '../../../../src/entries/contentScript/primary/SequenceRunner'
+import {
+  ActionTargetStrategyType,
+  type ActionSequence,
+  type SequenceActionTarget
+} from '../../../../src/lib/models/config'
+import * as pause from '../../../../src/lib/utils/pause'
+import { _getSequenceTarget_ } from '../../../lib/models/testUtils'
+import type { MockInstance } from 'vitest'
 
 describe('contentScript: SequenceRunner', () => {
   afterEach(() => {
@@ -102,6 +110,7 @@ describe('contentScript: SequenceRunner', () => {
 
   describe('executeSequence', () => {
     const sendMessageSpy = vi.spyOn(SequenceRunner, <never>'sendMessage')
+    const handleTargetSpy = vi.spyOn(SequenceRunner, <never>'handleTarget')
 
     let sequenceName: string
 
@@ -111,10 +120,12 @@ describe('contentScript: SequenceRunner', () => {
 
     afterEach(() => {
       sendMessageSpy.mockReset()
+      handleTargetSpy.mockReset()
     })
 
     it('sends a message that the sequence began executing', async () => {
       await SequenceRunner.executeSequence({ name: sequenceName, targets: [] })
+
       expect(sendMessageSpy).toHaveBeenCalledTimes(2)
       expect(sendMessageSpy).toHaveBeenNthCalledWith(
         1,
@@ -127,15 +138,70 @@ describe('contentScript: SequenceRunner', () => {
       )
     })
 
-    it.skip('executes each target in the provided sequence', async () => {})
+    it('executes each target in the provided sequence', async () => {
+      handleTargetSpy.mockResolvedValue(undefined)
+      const target1: SequenceActionTarget = _getSequenceTarget_()
+      const target2: SequenceActionTarget = _getSequenceTarget_()
 
-    it.skip('sends message when an error is thrown for a target', async () => {})
+      await SequenceRunner.executeSequence({ name: sequenceName, targets: [target1, target2] })
 
-    it.skip('continues handling subsequent targets when error is thrown by previous target', async () => {})
+      expect(handleTargetSpy).toHaveBeenCalledTimes(2)
+      expect(handleTargetSpy).toHaveBeenNthCalledWith(1, sequenceName, target1)
+      expect(handleTargetSpy).toHaveBeenNthCalledWith(2, sequenceName, target2)
+    })
+
+    it('sends message when an error is thrown for a target', async () => {
+      handleTargetSpy.mockRejectedValue(new Error('bad request'))
+      const target: SequenceActionTarget = _getSequenceTarget_()
+
+      await SequenceRunner.executeSequence({ name: sequenceName, targets: [target] })
+
+      expect(sendMessageSpy).toHaveBeenCalledTimes(3)
+      expect(sendMessageSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          detail: {
+            sequenceName,
+            messageType: SequenceRunnerEventType.error,
+            error: 'bad request'
+          }
+        })
+      )
+    })
+
+    it('sends message when an error with no message is thrown for a target', async () => {
+      handleTargetSpy.mockRejectedValue('bad request')
+      const target: SequenceActionTarget = _getSequenceTarget_()
+
+      await SequenceRunner.executeSequence({ name: sequenceName, targets: [target] })
+
+      expect(sendMessageSpy).toHaveBeenCalledTimes(3)
+      expect(sendMessageSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          detail: {
+            sequenceName,
+            messageType: SequenceRunnerEventType.error,
+            error: 'unknown'
+          }
+        })
+      )
+    })
+
+    it('continues handling subsequent targets when error is thrown by previous target', async () => {
+      handleTargetSpy.mockRejectedValueOnce(new Error('bad request')).mockResolvedValue(undefined)
+      const target1: SequenceActionTarget = _getSequenceTarget_()
+      const target2: SequenceActionTarget = _getSequenceTarget_()
+
+      await SequenceRunner.executeSequence({ name: sequenceName, targets: [target1, target2] })
+
+      expect(handleTargetSpy).toHaveBeenCalledTimes(2)
+      expect(handleTargetSpy).toHaveBeenNthCalledWith(1, sequenceName, target1)
+      expect(handleTargetSpy).toHaveBeenNthCalledWith(2, sequenceName, target2)
+    })
 
     it('sends a message that the sequence finished executing', async () => {
       await SequenceRunner.executeSequence({ name: sequenceName, targets: [] })
-      console.log(sendMessageSpy.mock.calls)
       expect(sendMessageSpy).toHaveBeenNthCalledWith(
         2,
         expect.objectContaining({
@@ -148,53 +214,404 @@ describe('contentScript: SequenceRunner', () => {
     })
 
     describe('when handling clickAllFound strategy', () => {
-      it.skip('defaults to a timeBetweenMs of 0', async () => {})
+      const querySelectorAllSpy = vi.spyOn(document, 'querySelectorAll')
+      const clickAllFoundSpy = vi.spyOn(SequenceRunner, <never>'clickAllFound')
+      const click = vi.fn()
+      let target: SequenceActionTarget
+      let sequence: ActionSequence
 
-      it.skip('respects custom timeBetweenMs', async () => {})
+      beforeEach(() => {
+        target = _getSequenceTarget_()
+        target.strategy = ActionTargetStrategyType.clickAllFound
+        sequence = { name: sequenceName, targets: [target] }
+      })
 
-      it.skip('defaults to a maxClicks of 1000', async () => {})
+      it('defaults to a timeBetweenMs of 0', async () => {
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('respects custom maxClicks', async () => {})
+        expect(clickAllFoundSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ timeBetweenMs: 0 })
+        )
+      })
 
-      it.skip('treats negative number of maxClicks as Infinity', async () => {})
+      it('respects custom timeBetweenMs', async () => {
+        target.timeBetweenMs = 100
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('sends a message for the number of elements found', async () => {})
+        expect(clickAllFoundSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ timeBetweenMs: 100 })
+        )
+      })
 
-      it.skip('sends error message if an element is unclickable', async () => {})
+      it('defaults to a maxClicks of 1000', async () => {
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('waits in between clicks based on timeBetweenMs', async () => {})
+        expect(clickAllFoundSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: 1000 })
+        )
+      })
 
-      it.skip('keeps clicking up until maxClicks', async () => {})
+      it('respects custom maxClicks', async () => {
+        target.maxClicks = 100
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('sends a message if maxClicks is reached', async () => {})
+        expect(clickAllFoundSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: 100 })
+        )
+      })
 
-      it.skip('sends a message for how many elements were clicked', async () => {})
+      it('treats negative number of maxClicks as Infinity', async () => {
+        target.maxClicks = -1
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(clickAllFoundSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: Infinity })
+        )
+      })
+
+      it('sends a message for the number of elements found', async () => {
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.foundElements,
+              elementCount: matchingElements.length
+            }
+          })
+        )
+      })
+
+      it('sends error message if an element is unclickable', async () => {
+        const getHtmlResult = randomUUID()
+        const matchingElements = [
+          { getHTML: () => getHtmlResult } as Element
+        ] as unknown as NodeListOf<Element>
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              messageType: SequenceRunnerEventType.error,
+              error: `element for selector ${target.selector} is not clickable: ${getHtmlResult}`
+            }
+          })
+        )
+      })
+
+      it('waits in between clicks based on timeBetweenMs', async () => {
+        const pauseSpy = vi.spyOn(pause, 'pause').mockResolvedValue(undefined)
+        target.timeBetweenMs = randomInt(2, 999)
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(pauseSpy).toHaveBeenCalledTimes(matchingElements.length)
+        expect(pauseSpy).toHaveBeenCalledWith(target.timeBetweenMs)
+      })
+
+      it('keeps clicking up until maxClicks', async () => {
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        target.maxClicks = matchingElements.length - 1
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(click).toHaveBeenCalledTimes(target.maxClicks)
+      })
+
+      it('sends a message if maxClicks is reached', async () => {
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        target.maxClicks = matchingElements.length - 1
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.reachedMaxClicks,
+              configuredMaximum: target.maxClicks
+            }
+          })
+        )
+      })
+
+      it('sends a message for how many elements were clicked', async () => {
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements,
+              clickCount: matchingElements.length
+            }
+          })
+        )
+      })
+
+      it('sends a message for how many elements were clicked even if maxClicks was reached', async () => {
+        const matchingElements = makeQuerySelectorAllReturnValue()
+        target.maxClicks = matchingElements.length - 1
+        querySelectorAllSpy.mockReturnValueOnce(matchingElements)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements,
+              clickCount: target.maxClicks
+            }
+          })
+        )
+      })
+
+      it('skips sending a message for how many times the matching element was clicked if it was never found', async () => {
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: expect.objectContaining({
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements
+            })
+          })
+        )
+      })
+
+      function makeQuerySelectorAllReturnValue() {
+        return Array.from({ length: randomInt(2, 999) }).map(
+          () => ({ click }) as unknown as Element
+        ) as unknown as NodeListOf<Element>
+      }
     })
 
     describe('when handling clickWhilePresent strategy', () => {
-      it.skip('defaults to a timeBetweenMs of 0', async () => {})
+      const querySelectorSpy = vi.spyOn(document, 'querySelector')
+      const clickWhilePresentSpy = vi.spyOn(SequenceRunner, <never>'clickWhilePresent')
+      const click = vi.fn()
 
-      it.skip('respects custom timeBetweenMs', async () => {})
+      let target: SequenceActionTarget
+      let sequence: ActionSequence
+      let matchingElement: Element
 
-      it.skip('defaults to a maxClicks of 1000', async () => {})
+      beforeEach(() => {
+        target = _getSequenceTarget_()
+        target.strategy = ActionTargetStrategyType.clickWhilePresent
+        sequence = { name: sequenceName, targets: [target] }
+        matchingElement = { click } as unknown as Element
+      })
 
-      it.skip('respects custom maxClicks', async () => {})
+      it('defaults to a timeBetweenMs of 0', async () => {
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('treats negative number of maxClicks as Infinity', async () => {})
+        expect(clickWhilePresentSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ timeBetweenMs: 0 })
+        )
+      })
 
-      it.skip('sends error message if an element is unclickable', async () => {})
+      it('respects custom timeBetweenMs', async () => {
+        target.timeBetweenMs = 100
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('waits in between clicks based on timeBetweenMs', async () => {})
+        expect(clickWhilePresentSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ timeBetweenMs: 100 })
+        )
+      })
 
-      it.skip('keeps clicking up until maxClicks', async () => {})
+      it('defaults to a maxClicks of 1000', async () => {
+        await SequenceRunner.executeSequence(sequence)
 
-      it.skip('sends a message if maxClicks is reached', async () => {})
+        expect(clickWhilePresentSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: 1000 })
+        )
+      })
 
-      it.skip('sends a message for how many elements were clicked', async () => {})
+      it('respects custom maxClicks', async () => {
+        target.maxClicks = 100
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(clickWhilePresentSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: 100 })
+        )
+      })
+
+      it('treats negative number of maxClicks as Infinity', async () => {
+        target.maxClicks = -1
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(clickWhilePresentSpy).toHaveBeenCalledExactlyOnceWith(
+          sequenceName,
+          expect.objectContaining({ maxClicks: Infinity })
+        )
+      })
+
+      it('sends error message if an element is unclickable', async () => {
+        const getHtmlResult = randomUUID()
+        // @ts-expect-error
+        delete matchingElement.click
+        matchingElement.getHTML = () => getHtmlResult
+        querySelectorSpy.mockReturnValueOnce(matchingElement)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              messageType: SequenceRunnerEventType.error,
+              error: `element for selector ${target.selector} is not clickable: ${getHtmlResult}`
+            }
+          })
+        )
+      })
+
+      it('waits in between clicks based on timeBetweenMs', async () => {
+        const pauseSpy = vi.spyOn(pause, 'pause').mockResolvedValue(undefined)
+        target.timeBetweenMs = randomInt(2, 999)
+        const timesFound = randomInt(2, 999)
+        mockReturnValueNTimes(querySelectorSpy, timesFound, matchingElement)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(pauseSpy).toHaveBeenCalledTimes(timesFound)
+        expect(pauseSpy).toHaveBeenCalledWith(target.timeBetweenMs)
+      })
+
+      it('keeps clicking up until maxClicks', async () => {
+        const timesFound = randomInt(2, 999)
+        mockReturnValueNTimes(querySelectorSpy, timesFound, matchingElement)
+        target.maxClicks = timesFound - 1
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(click).toHaveBeenCalledTimes(target.maxClicks)
+      })
+
+      it('sends a message if maxClicks is reached', async () => {
+        const timesFound = randomInt(2, 999)
+        mockReturnValueNTimes(querySelectorSpy, timesFound, matchingElement)
+        target.maxClicks = timesFound - 1
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.reachedMaxClicks,
+              configuredMaximum: target.maxClicks
+            }
+          })
+        )
+      })
+
+      it('sends a message for how many times the matching element was clicked', async () => {
+        const timesFound = randomInt(2, 999)
+        mockReturnValueNTimes(querySelectorSpy, timesFound, matchingElement)
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements,
+              clickCount: timesFound
+            }
+          })
+        )
+      })
+
+      it('sends a message for how many elements were clicked even if maxClicks was reached', async () => {
+        const timesFound = randomInt(2, 999)
+        mockReturnValueNTimes(querySelectorSpy, timesFound, matchingElement)
+        target.maxClicks = timesFound - 1
+
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements,
+              clickCount: target.maxClicks
+            }
+          })
+        )
+      })
+
+      it('skips sending a message for how many times the matching element was clicked if it was never found', async () => {
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: expect.objectContaining({
+              sequenceName,
+              targetName: target.name,
+              messageType: SequenceRunnerEventType.clickedElements
+            })
+          })
+        )
+      })
     })
 
     describe('when handling an unrecognized strategy', () => {
-      it.skip('sends message for corresponding error', async () => {})
+      let target: SequenceActionTarget
+      let sequence: ActionSequence
+
+      beforeEach(() => {
+        target = _getSequenceTarget_()
+        // @ts-expect-error
+        target.strategy = randomUUID()
+        sequence = { name: sequenceName, targets: [target] }
+      })
+
+      it('sends message for corresponding error', async () => {
+        await SequenceRunner.executeSequence(sequence)
+
+        expect(sendMessageSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            detail: {
+              sequenceName,
+              messageType: SequenceRunnerEventType.error,
+              error: `unrecognized strategy: ${target.strategy}`
+            }
+          })
+        )
+      })
     })
   })
 
@@ -210,3 +627,13 @@ describe('contentScript: SequenceRunner', () => {
     })
   })
 })
+
+function mockReturnValueNTimes<T extends (...args: any[]) => any>(
+  spy: MockInstance<T>,
+  n: number,
+  returnValue: any
+) {
+  for (let i = 0; i < n; i++) {
+    spy.mockReturnValueOnce(returnValue)
+  }
+}
