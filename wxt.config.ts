@@ -7,6 +7,6 @@ export default defineConfig({
   modules: ['@wxt-dev/module-svelte'],
   manifest: {
     name: "Click 'em All",
-    permissions: ['storage']
+    permissions: ['storage', 'tabs']
   }
 })
