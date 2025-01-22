@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/svelte'
 import { userEvent } from '@testing-library/user-event'
-import browser from 'webextension-polyfill'
+import { browser } from 'wxt/browser'
 import OpenOptionsPageButton from '../../../src/lib/components/OpenOptionsPageButton.svelte'
 
 describe('OpenOptionPageButton', () => {

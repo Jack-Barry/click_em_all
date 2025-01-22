@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/svelte'
-import type { Tabs } from 'webextension-polyfill'
+import type { Tabs } from 'wxt/browser'
 import ActionSequenceList from '../../../src/lib/components/ActionSequenceList.svelte'
 import type { Config } from '../../../src/lib/models/config'
 import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'

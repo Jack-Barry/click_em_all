@@ -6,43 +6,38 @@
   "description": "A web extension for clicking all the things",
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
     "coverage": "vitest run --coverage",
-    "dev": "vite",
-    "format": "prettier --write .",
-    "serve:firefox": "web-ext run --start-url \"about:debugging#/runtime/this-firefox\"  --source-dir ./dist/",
-    "serve:chrome": "web-ext run -t chromium --start-url \"https://example.com\" --source-dir ./dist/",
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "svelte-check": "svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "watch": "vite build --watch --mode development --minify false"
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox"
   },
   "license": "MIT",
   "devDependencies": {
-    "@samrum/vite-plugin-web-extension": "^5.0.0",
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/svelte": "^5.2.6",
     "@testing-library/user-event": "^14.6.0",
     "@tsconfig/svelte": "^5.0.2",
     "@types/chrome": "^0.0.254",
-    "@types/webextension-polyfill": "^0.10.6",
     "@vitest/coverage-v8": "^3.0.1",
+    "@wxt-dev/module-svelte": "^2.0.2",
     "happy-dom": "^16.6.0",
     "prettier": "^3.4.2",
-    "svelte": "^4.2.5",
+    "svelte": "^5.19.1",
     "svelte-check": "^3.6.0",
-    "svelte-preprocess": "^5.1.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.0",
     "vitest": "^3.0.1",
-    "web-ext": "^7.8.0"
+    "wxt": "^0.19.24"
   },
   "dependencies": {
     "dayjs": "^1.11.13",
     "webext-bridge": "^6.0.1",
-    "webextension-polyfill": "^0.10.0",
     "zod": "^3.24.1"
   }
 }

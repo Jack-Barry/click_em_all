@@ -1,10 +1,6 @@
-import {
-  ActionTargetStrategyType,
-  type ActionSequence,
-  type SequenceActionTarget
-} from '~/lib/models/config'
-import { Logging } from '~/lib/utils/Logging'
-import { pause } from '~/lib/utils/pause'
+import { ActionSequence, ActionTargetStrategyType, SequenceActionTarget } from './models/config'
+import { Logging } from './utils/Logging'
+import { pause } from './utils/pause'
 
 export enum SequenceRunnerEventType {
   error = 'error',

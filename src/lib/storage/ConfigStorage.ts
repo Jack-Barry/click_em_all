@@ -1,4 +1,4 @@
-import browser from 'webextension-polyfill'
+import { browser } from 'wxt/browser'
 import { validateConfig, type Config } from '../models/config'
 
 type StorageListener = Parameters<typeof browser.storage.local.onChanged.addListener>[0]
@@ -35,7 +35,7 @@ export class ConfigStorage {
         return
       }
 
-      onChange(updatedConfig)
+      onChange(updatedConfig as Config)
     }
     browser.storage.local.onChanged.addListener(listener)
     ConfigStorage.changeListeners[id] = listener

@@ -1,7 +1,4 @@
-import type {
-  SequenceRunnerEventDetail,
-  SequenceRunnerEventType
-} from '../contentScript/primary/SequenceRunner'
+import { SequenceRunnerEventDetail, SequenceRunnerEventType } from './SequenceRunner'
 
 export interface ActionSequenceStatusListItem<
   EventType extends SequenceRunnerEventType = SequenceRunnerEventType

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import browser from 'webextension-polyfill';
+  import { browser } from 'wxt/browser'
 
   async function openOptionsPage() {
-    await browser.runtime.openOptionsPage();
+    await browser.runtime.openOptionsPage()
   }
 </script>
 

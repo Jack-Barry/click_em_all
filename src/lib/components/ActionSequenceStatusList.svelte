@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ActionSequenceStatusList } from '~/entries/popup/types'
+  import type { ActionSequenceStatusList } from '../types'
   import ActionSequenceStatusListItem from './ActionSequenceStatusListItem.svelte'
 
   export let actionSequenceStatusList: ActionSequenceStatusList

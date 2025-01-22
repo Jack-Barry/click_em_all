@@ -1,9 +1,6 @@
 <script lang="ts">
-  import type { ActionSequenceStatusListItem } from '~/entries/popup/types'
-  import {
-    SequenceRunnerEventType,
-    type SomeSequenceRunnerEventDetail
-  } from '~/entries/contentScript/primary/SequenceRunner'
+  import { SequenceRunnerEventType, type SomeSequenceRunnerEventDetail } from '../SequenceRunner'
+  import type { ActionSequenceStatusListItem } from '../types'
   import { formattedTimestamp } from '../utils/date'
 
   export let statusListItem: ActionSequenceStatusListItem

@@ -1,4 +1,4 @@
-import browser, { type Tabs } from 'webextension-polyfill'
+import { browser, type Tabs } from 'wxt/browser'
 import { getActiveTab } from '../../../../src/lib/utils/browser/tabs'
 
 describe('utils: tabs', () => {

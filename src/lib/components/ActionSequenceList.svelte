@@ -1,18 +1,18 @@
 <script lang="ts">
   import { onMessage, sendMessage } from 'webext-bridge/popup'
-  import { type Tabs } from 'webextension-polyfill'
   import { getSequencesForUrl, type ActionSequence } from '../models/config'
   import { onMount } from 'svelte'
   import { getActiveTab } from '../utils/browser/tabs'
   import { ConfigStorage } from '../storage/ConfigStorage'
   import { IpcMessageIds } from '../constants'
+  import { Logging } from '../utils/Logging'
+  import ActionSequenceStatusList from './ActionSequenceStatusList.svelte'
+  import type { Tabs } from 'wxt/browser'
   import {
     SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
     type SequenceRunnerEventDetail
-  } from '~/entries/contentScript/primary/SequenceRunner'
-  import type { ActionSequenceStatusLists } from '~/entries/popup/types'
-  import { Logging } from '../utils/Logging'
-  import ActionSequenceStatusList from './ActionSequenceStatusList.svelte'
+  } from '../SequenceRunner'
+  import type { ActionSequenceStatusLists } from '../types'
 
   const configStorage = ConfigStorage.getInstance()
 
@@ -21,7 +21,7 @@
 
   onMount(async () => {
     activeTab = await getActiveTab()
-    const activeTabUrl = activeTab.url
+    const activeTabUrl = activeTab?.url
 
     if (!activeTabUrl) {
       activeTabSequences = []

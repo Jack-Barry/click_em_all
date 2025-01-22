@@ -6,12 +6,12 @@
         {
           "name": "Load more",
           "selector": ".load-more",
-          "strategy": "whilePresent"
+          "strategy": "clickWhilePresent"
         },
         {
           "name": "Clip coupon",
           "selector": "[id^=\"couponAddBtn\"]",
-          "strategy": "allFound",
+          "strategy": "clickAllFound",
           "timeBetweenMs": 500
         }
       ]

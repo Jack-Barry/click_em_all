@@ -52,7 +52,7 @@
     <label for={id}>Config</label>
   </div>
   <div>
-    <textarea {id} name={id} bind:value={$configAsString} cols={80} rows={20} />
+    <textarea {id} name={id} bind:value={$configAsString} cols={80} rows={20}></textarea>
   </div>
   <button type="submit" disabled={!$isValidConfig}>Save Config</button>
 </form>

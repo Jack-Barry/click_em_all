@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import browser from 'webextension-polyfill'
+import { browser } from 'wxt/browser'
 import * as configModule from '../../../src/lib/models/config'
 import { type Config } from '../../../src/lib/models/config'
 import { ConfigStorage } from '../../../src/lib/storage/ConfigStorage'
