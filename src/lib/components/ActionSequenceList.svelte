@@ -10,6 +10,7 @@
   import type { Tabs } from 'wxt/browser'
   import {
     SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
+    SequenceRunnerEventType,
     type SequenceRunnerEventDetail
   } from '../SequenceRunner'
   import type { ActionSequenceStatusLists } from '../types'
@@ -40,7 +41,10 @@
       JSON.stringify(sequenceRunnerEvent)
     )
 
-    if (actionSequenceStatusLists[detail.sequenceName] === undefined) {
+    if (
+      actionSequenceStatusLists[detail.sequenceName] === undefined ||
+      detail.messageType === SequenceRunnerEventType.beganExecuting
+    ) {
       actionSequenceStatusLists[detail.sequenceName] = []
     }
 
