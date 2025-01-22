@@ -1,12 +1,9 @@
 import { randomInt, randomUUID } from 'node:crypto'
 import { render, screen } from '@testing-library/svelte'
-import { SequenceRunnerEventType } from '../../../src/entries/contentScript/primary/SequenceRunner'
-import type {
-  ActionSequenceStatusList,
-  ActionSequenceStatusListItem
-} from '../../../src/entries/popup/types'
 import ActionSequenceStatusListComponent from '../../../src/lib/components/ActionSequenceStatusList.svelte'
 import { formattedTimestamp } from '../../../src/lib/utils/date'
+import { ActionSequenceStatusList, ActionSequenceStatusListItem } from '../../../src/lib/types'
+import { SequenceRunnerEventType } from '../../../src/lib/SequenceRunner'
 
 describe('components: ActionSequenceStatusList', () => {
   let sequenceName: string
