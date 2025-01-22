@@ -5,6 +5,9 @@
   "author": "Jack Barry",
   "description": "A web extension for clicking all the things",
   "type": "module",
+  "engines": {
+    "node": ">=20.14.0"
+  },
   "scripts": {
     "build": "wxt build",
     "build:firefox": "wxt build -b firefox",
