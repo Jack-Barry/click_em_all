@@ -1,4 +1,4 @@
-# Click 'em All
+# ![Click 'em All Logo](./src/assets/logo.svg) Click 'em All
 
 A cross-browser compatible extension for clicking all the things.
 
