@@ -4,6 +4,13 @@
 </script>
 
 <main>
-  <ActionSequenceList></ActionSequenceList>
-  <OpenOptionsPageButton></OpenOptionsPageButton>
+  <div class="display-flex flex-column flex-gap-4">
+    <ActionSequenceList></ActionSequenceList>
+    <div>
+      <hr />
+    </div>
+    <div class="display-flex flex-justify-end">
+      <OpenOptionsPageButton></OpenOptionsPageButton>
+    </div>
+  </div>
 </main>

@@ -6,4 +6,4 @@
   }
 </script>
 
-<button on:click={openOptionsPage}>Options</button>
+<button on:click={openOptionsPage}>Extension Options</button>

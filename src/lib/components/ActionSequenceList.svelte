@@ -53,6 +53,18 @@
       { timestamp: sequenceRunnerEvent.timestamp, detail }
     ]
   })
+
+  function executingSequence(sequence: ActionSequence) {
+    if (
+      !!actionSequenceStatusLists[sequence.name] &&
+      actionSequenceStatusLists[sequence.name].at(-1)?.detail.messageType !==
+        SequenceRunnerEventType.finishedExecuting
+    ) {
+      return true
+    }
+
+    return false
+  }
 </script>
 
 {#each activeTabSequences as sequence}
@@ -60,10 +72,13 @@
     <button
       on:click={() => {
         sendMessage(IpcMessageIds.executeSequence, sequence, `content-script@${activeTab?.id}`)
-      }}>{sequence.name}</button
+      }}
+      disabled={executingSequence(sequence)}>{sequence.name}</button
     >
-    <ActionSequenceStatusList
-      actionSequenceStatusList={actionSequenceStatusLists[sequence.name] || []}
-    />
+    <div class="margin-top-8 margin-bottom-8">
+      <ActionSequenceStatusList
+        actionSequenceStatusList={actionSequenceStatusLists[sequence.name] || []}
+      />
+    </div>
   </div>
 {/each}
