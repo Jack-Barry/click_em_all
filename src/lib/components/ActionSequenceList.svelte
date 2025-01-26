@@ -67,18 +67,22 @@
   }
 </script>
 
-{#each activeTabSequences as sequence}
-  <div>
-    <button
-      on:click={() => {
-        sendMessage(IpcMessageIds.executeSequence, sequence, `content-script@${activeTab?.id}`)
-      }}
-      disabled={executingSequence(sequence)}>{sequence.name}</button
-    >
-    <div class="margin-top-8 margin-bottom-8">
-      <ActionSequenceStatusList
-        actionSequenceStatusList={actionSequenceStatusLists[sequence.name] || []}
-      />
+{#if activeTabSequences.length > 0}
+  {#each activeTabSequences as sequence}
+    <div>
+      <button
+        on:click={() => {
+          sendMessage(IpcMessageIds.executeSequence, sequence, `content-script@${activeTab?.id}`)
+        }}
+        disabled={executingSequence(sequence)}>{sequence.name}</button
+      >
+      <div class="margin-top-8 margin-bottom-8">
+        <ActionSequenceStatusList
+          actionSequenceStatusList={actionSequenceStatusLists[sequence.name] || []}
+        />
+      </div>
     </div>
-  </div>
-{/each}
+  {/each}
+{:else}
+  <div>No sequences configured for this page.</div>
+{/if}

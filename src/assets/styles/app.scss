@@ -13,19 +13,6 @@ body {
   font-family: sans-serif;
 }
 
-textarea {
-  padding: 4px;
-  margin: 12px 0;
-  border: 8px solid transparent;
-  border-radius: 6px;
-  background-color: $dark-gray;
-  color: $white;
-
-  &:focus-visible {
-    outline: 2px solid $red;
-  }
-}
-
 h1,
 h2,
 h3,
@@ -43,6 +30,23 @@ h1 {
 a,
 hr {
   color: $red;
+}
+
+p {
+  line-height: 1.75;
+}
+
+textarea {
+  padding: 4px;
+  margin: 12px 0;
+  border: 8px solid transparent;
+  border-radius: 6px;
+  background-color: $dark-gray;
+  color: $white;
+
+  &:focus-visible {
+    outline: 2px solid $red;
+  }
 }
 
 button {

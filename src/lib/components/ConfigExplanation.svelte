@@ -62,8 +62,8 @@
   </div>
   <h2>Why Is This Thing So Ugly?</h2>
   <p>
-    Once the name popped in my head, I had to have some fun and pay some homage to a certain album
-    that was part of some fond memories from my youth. Modern slick web apps and accessibility be
-    damned.
+    Once the name popped in my head, I had to have some fun and pay homage to an album that was part
+    of fond memories from my delinquent youth. It does its job, it don't need to be pretty. Modern
+    slick app design be damned 🤘
   </p>
 </div>
