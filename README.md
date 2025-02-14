@@ -2,6 +2,10 @@
 
 A cross-browser compatible extension for clicking all the things.
 
+## Demo of Usage
+
+<https://github.com/user-attachments/assets/7a4e0819-86ba-4609-8820-6f88cc8e8eab>
+
 ## Development Notes
 
 This extension was built using the nifty [WXT](https://wxt.dev/) framework.
