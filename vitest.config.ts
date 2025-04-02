@@ -14,10 +14,12 @@ export default defineConfig({
     coverage: {
       exclude: [
         '**/*.d.ts',
+        '.output/*',
+        'demo/*',
         'dist/*',
         'tests/*',
-        'src/entrypoints/**/App.svelte',
-        'src/entrypoints/**/main.ts',
+        'src/entrypoints/*',
+        'src/lib/types.ts',
         'vitest.config.ts',
         'wxt.config.ts'
       ]

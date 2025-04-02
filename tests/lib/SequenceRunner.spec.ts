@@ -1,18 +1,18 @@
 import { randomInt, randomUUID } from 'node:crypto'
-import {
-  ActionTargetStrategyType,
-  type ActionSequence,
-  type SequenceActionTarget
-} from '../../../../src/lib/models/config'
-import * as pause from '../../../../src/lib/utils/pause'
-import { _getSequenceTarget_ } from '../../../lib/models/testUtils'
 import type { MockInstance } from 'vitest'
 import {
-  SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
+  SequenceActionTarget,
+  ActionSequence,
+  ActionTargetStrategyType
+} from '../../src/lib/models/config'
+import {
   SequenceRunner,
-  SequenceRunnerEvent,
-  SequenceRunnerEventType
-} from '../../../../src/lib/SequenceRunner'
+  SEQUENCE_RUNNER_EMITTED_EVENT_TYPE,
+  SequenceRunnerEventType,
+  SequenceRunnerEvent
+} from '../../src/lib/SequenceRunner'
+import * as pause from '../../src/lib/utils/pause'
+import { _getSequenceTarget_ } from './models/testUtils'
 
 describe('contentScript: SequenceRunner', () => {
   afterEach(() => {

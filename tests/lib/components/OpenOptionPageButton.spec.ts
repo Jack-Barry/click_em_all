@@ -8,7 +8,7 @@ describe('OpenOptionPageButton', () => {
     const openOptionsPage = vi.spyOn(browser.runtime, 'openOptionsPage')
     render(OpenOptionsPageButton)
 
-    const openOptionsPageButton = screen.getByText('Options')
+    const openOptionsPageButton = screen.getByText('Extension Options')
     await userEvent.click(openOptionsPageButton)
     expect(openOptionsPage).toHaveBeenCalledOnce()
   })

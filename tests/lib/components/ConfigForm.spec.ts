@@ -127,7 +127,12 @@ function getConfigTextInput() {
 }
 
 function getSubmitButton() {
-  return screen.getByText('Save Config')
+  const submitButtonSpan = screen.getByText('Save Config')
+  if (!submitButtonSpan?.parentElement) {
+    throw new Error('Expected span to have a parent element')
+  }
+
+  return submitButtonSpan.parentElement
 }
 
 async function waitForConfigInputValue(config: Config) {
