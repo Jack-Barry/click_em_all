@@ -14,7 +14,7 @@
     "coverage": "vitest run --coverage",
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",
-    "svelte-check": "svelte-check --no-tsconfig",
+    "svelte-check": "svelte-check --no-tsconfig --ignore demo",
     "test": "vitest run",
     "test:watch": "vitest",
     "zip": "wxt zip",

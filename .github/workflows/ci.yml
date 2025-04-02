@@ -19,6 +19,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      # Demo app
+      - working-directory: demo
+        run: npm ci
+      - working-directory: demo
+        run: npm run lint
+      - working-directory: demo
+        run: npm run build
+      - working-directory: demo
+        run: npm run build
+      - working-directory: demo
+        run: npm run check
+      # Browser Extension
       - run: npm ci
       - run: npm run build
       - run: npm run build:firefox
